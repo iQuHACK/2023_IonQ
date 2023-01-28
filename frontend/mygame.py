@@ -41,7 +41,7 @@ class QuaganiniGUI():
         self.tmp_circuit = QuantumCircuit(5, 5)
         self.tmp_circuit.h(0)
         self.tmp_circuit.h(1)
-        # self.tmp_circuit.cx(0, 1)
+        self.tmp_circuit.cx(0, 1)
         # self.tmp_circuit.cx(0, 2)
 
     def on_init(self):
@@ -75,9 +75,16 @@ class QuaganiniGUI():
 
             return surf
         
+        d = 0.3
+        small_bbox = pygame.Rect((0, 0), (d * self.cell_len, d * self.cell_len)) 
+        c_surf = pygame.Surface((d * self.cell_len, d * self.cell_len), pygame.SRCALPHA)
+        pygame.draw.ellipse(c_surf, pygame.Color("white"), small_bbox)
+
+
         return {"H": build_gen_surface("H", pygame.Color("white"), (0, 0, 255)),
                 "X": build_gen_surface("X", pygame.Color("white"), (0, 255, 0)),
-                "Z": build_gen_surface("Z", pygame.Color("white"), (255, 0, 0)),}
+                "Z": build_gen_surface("Z", pygame.Color("white"), (255, 0, 0)),
+                "C": c_surf}
 
     def on_loop(self):
         # do mouseover handling
@@ -125,8 +132,26 @@ class QuaganiniGUI():
             surf = self.gate_dict[op_name.upper()]
             loc = (((2 * i + 2) + 0.5) * self.cell_len, (target + 0.5) * self.cell_len)
             circ_surf.blit(surf, surf.get_rect(center=loc))
-        else:
-            raise NotImplementedError
+        elif len(op_name) == 2:
+            # control gate
+            # from
+            c_index = qreg.index(circuit_instruction.qubits[0])
+            t_index = qreg.index(circuit_instruction.qubits[1])
+
+            c_loc = (((2 * i + 2) + 0.5) * self.cell_len, (c_index + 0.5) * self.cell_len)
+            t_loc = (c_loc[0], (t_index + 0.5) * self.cell_len) 
+
+            # draw line between
+            pygame.draw.line(circ_surf, pygame.Color("white"), c_loc, t_loc)
+
+            # draw a control at c_pos
+            c_surf = self.gate_dict['C']
+            circ_surf.blit(c_surf, c_surf.get_rect(center=c_loc))
+
+            # draw gate at t_pos
+            surf = self.gate_dict[op_name[1].upper()]
+            circ_surf.blit(surf, surf.get_rect(center=t_loc))
+
 
     def on_event(self, event):
         if event.type == pygame.QUIT:
