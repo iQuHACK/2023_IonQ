@@ -2,11 +2,11 @@ from midiutil.MidiFile import MIDIFile
 import pygame
 
 bit_to_time = {
-                '000': 4,
+                '100': 4,
                 '001': 3,
                 '010': 2,
                 '011': 1.5,
-                '100': 1,
+                '000': 1,
                 '101': 0.75,
                 '110': 0.5,
                 '111': 0.25,
@@ -109,7 +109,7 @@ def play_notes(midi_filename, vol = 1.0):
         pygame.mixer.music.stop()
         raise SystemExit
 
-# Example: Bill Kill by SZA
-notes = ['Bb2', 'C3', 'Db3', 'Ab3', 'G3', 'G3', 'F3', 'Eb3', 'Bb2', 'C3']
-bits_arr = ['100' + bin(note_to_midinum[note] - 48).replace('0b','') for note in notes]
-play_notes(write_to_midi(bits_arr))
+# Example: Kill Bill by SZA
+# notes = ['Bb2', 'C3', 'Db3', 'Ab3', 'G3', 'G3', 'F3', 'Eb3', 'Bb2', 'C3']
+# bits_arr = ['100' + bin(note_to_midinum[note] - 48).replace('0b','') for note in notes]
+# play_notes(write_to_midi(bits_arr))
