@@ -2,6 +2,8 @@
 
 ![logo](https://user-images.githubusercontent.com/79099250/215311239-4e778a72-0289-4562-b3a3-e8799e14ea8b.png)
 
+![IonQ_corp_logo](https://user-images.githubusercontent.com/79099250/215311276-dd9675f7-77c7-424b-ad23-4d46bd819845.png)
+
 Game of Finches is a package that uses the IonQ quantum computer to simulate the evolution process of Darwin's finches. Users can choose initial finches and natural selection parameters and watch as their finches evolve into unique specimens using superposition, entanglement, and dephasing as motors of evolution.
 
 The finches are modeled as having 4 characteristics: color, wingspan, beak size, body size. All characteristics can have any value ranging from 0 to 1, given by the resulting probability distribution of the evolution algorithm. The evolution involves multiple finches on separate islands which can interact with each other. The evolution unfolds as follows:
@@ -24,7 +26,6 @@ This evolution algorithm tries to model the dynamics of inter- and intra-populat
 
 We have run most simulations for 2 islands (1 finch per island) with 50 shots per QC. The imperfect gate fidelities are partially an advantage in this evolution algorithm, since it adds another layer of randomness, typical in evolution. 
 
-More detailed explanation of the algorithm can be found in the pdf document [ADD DOCUMENT NAME].
+More detailed explanation of the algorithm can be found in the pdf document iquhack_documentation.pdf.
 
-To run the algorithm run this notebook [NOTEBOOK NAME].
-
+To run the algorithm run this notebook main.ipynb.
