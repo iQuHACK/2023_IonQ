@@ -1,6 +1,8 @@
 # Z_boson
 iQuHACK 2023 project for ionQ
 
+https://firaollemu.github.io/index.html
+
 This project uses quantum procedural generation (https://arxiv.org/pdf/2007.11510.pdf) to generate a sound library from a few basic, random tunes generated from a limited number of sound elements (located in the ./sound_elements directory).
 
 The method is to construct an n_duration\*n_notes matrix for each sound element. Each column of the matrix corresponds to set frequencies (A3 to G4 in whole notes), and each row represents the notes being played simultaneously. One of the sound elements is transformed gradually to another using a partial swap operator, mixing the identity with the full swap operator.
