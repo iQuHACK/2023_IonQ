@@ -2,9 +2,10 @@
 from qiskit import QuantumCircuit, transpile
 from qiskit.visualization import plot_histogram
 from qiskit_ionq import IonQProvider
-from playsound import play_notes, write_to_midi
-import random
-
+from playsound import *
+from random import randint, random
+from numpy import pi
+from numpy.random import choice
 provider = IonQProvider(token='1oyMIFGGrziz9w5PtiTVeqPEtOKUGYoe')
 
 class Composer:
@@ -84,7 +85,7 @@ class Composer:
             circuit = circuit.compose(cir)
 
             circuit.measure(range(self.num_qubits), range(self.num_qubits))
-            backend = provider.get_backend("ionq_qpu")#("ionq_simulator")
+            backend = provider.get_backend("ionq_simulator  ")#("ionq_simulator")
             transpiled = transpile(circuit, backend)
 
             job = backend.run(transpiled, shots=1)
@@ -161,9 +162,91 @@ class Sandbox_CLI:
                 self.do_two(tokens)
             else:
                 self.do_error()
-        print("Circuit Done")
+        print("Circuit done")
         return
+
+    def construct_composer_auto(self):
+        while (True):
+            uin = input('> ').upper()
+            tokens = uin.split()
+            cmd = tokens[0]
+            if cmd == self.HELP:
+                self.do_help()
+            elif cmd == self.NEW:
+                print("Disabled in AUTO mode.")
+            elif cmd == self.END:
+                break
+            elif cmd == self.VIEWALL:
+                self.current_composer.dump()
+            elif cmd in self.current_composer.SGL_GATES:
+                self.do_sgl(tokens)
+            elif cmd in self.current_composer.SGL_GATES_PARAM:
+                self.do_sgl_param(tokens)
+            elif cmd in self.current_composer.TWO_GATES:
+                self.do_two(tokens)
+            else:
+                self.do_error()
+        print("Circuit Done")
+
+        master_circuit = self.current_composer.notes_circuits[0]
+        while len(master_circuit.data) > 1:
+            master_circuit = master_circuit.copy()
+            master_circuit.data.pop()
+            self.current_composer.notes_circuits.insert(0, master_circuit)
+    
+        return
+    
+    def construct_composer_random(self, num_notes):
+        # generate a random sequence of instructions
+        n = self.current_composer.num_qubits
+        commands = []
+        for i in range(num_notes):
+            remaining = 100
+            while True:
+                commands.append(self.random_command(n))
+                r = random()
+                if r < 0.1 or remaining == 0:
+                    break
+                remaining -= 1
+            commands.append(['new'])
         
+        commands[-1]= ['end']
+
+        for tokens in commands:
+            cmd = tokens[0].upper()
+            if cmd == self.NEW:
+                self.do_new()
+            elif cmd == self.END:
+                break
+            elif cmd in self.current_composer.SGL_GATES:
+                self.do_sgl(tokens)
+            elif cmd in self.current_composer.SGL_GATES_PARAM:
+                self.do_sgl_param(tokens)
+            elif cmd in self.current_composer.TWO_GATES:
+                self.do_two(tokens)
+        print("Random circuit done")
+        
+
+    def random_command(self, n):
+        p_s = 0.3
+        p_sr = 0.4
+        p_t = 0.3
+        selection = choice(['s', 'sr', 't'], p=[p_s, p_sr, p_t])
+        if selection == 's':
+            gate = choice(['x','y','z','h'], p=[0.15, 0.15, 0.15, 0.55])
+            idx = randint(0, n-1)
+            return [gate, idx]
+        elif selection == 'sr':
+            gate = choice(['rx','ry','rz'])
+            idx = randint(0, n-1)
+            param = random()*2*pi
+            return [gate, idx, param]
+        else:
+            gate = choice(['cx','cz'])
+            idx_src, idx_dst = choice(range(n), size=2, replace=False) 
+            return [gate, idx_src, idx_dst]
+            
+
     def do_help(self):
         help_message = """USAGE:
 Single qubit gate: [gate] [index]
@@ -213,10 +296,13 @@ View all the circuits: VIEWALL
         except:
             self.do_error()
     
+
+
 #testing
 sandbox = Sandbox_CLI()
 sandbox.init_composer('test')
-sandbox.construct_composer()
+sandbox.construct_composer_random(12)
+sandbox.current_composer.dump()
 
 for i in range(2):
     sandbox.current_composer.run_job()
