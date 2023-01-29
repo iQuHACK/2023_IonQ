@@ -1,40 +1,28 @@
-# In-person challenge
+# Game of Finches 
 
-Quantum computers have many exciting known uses for understanding our world. But, if the arc of classical computing is any guide, there are many quantum applications yet to discover for creating something wholly new.
+Game of Finches is a package that uses the IonQ quantum computer to simulate the evolution process of Darwin's finches. Users can choose initial finches and natural selection parameters and watch as their finches evolve into unique specimens using superposition, entanglement, and dephasing as motors of evolution.
 
-For this challenge, you must use a quantum computer to *generate* something new.
+The finches are modeled as having 4 characteristics: color, wingspan, beak size, body size. All characteristics can have any value ranging from 0 to 1, given by the resulting probability distribution of the evolution algorithm. The evolution involves multiple finches on separate islands which can interact with each other. The evolution unfolds as follows:
 
-Some ideas:
- - Make music with a quantum computer (https://arxiv.org/pdf/2110.12408.pdf)
- - Render graphics with a quantum ray tracer (https://arxiv.org/pdf/2204.12797.pdf)
- - Use procedural generation to make a new world (https://arxiv.org/abs/2007.11510)
- - Make a QGAN (https://arxiv.org/abs/2012.03924)
+1. Set initial characteristics of finches, interaction strengths, and natural selection pressure
+2. Each evolutionary time-step is realised by averaging of 20-50 repeats of a quantum circuit (QC)
+3. The output distribution of the QC, as well as natural selection pressure sets a new set initial
+characteristics of finches
+4. Repeat 2-3 for N generations
 
-Once you've debugged your code with regular simulation, please try our noisy simulators before graduating to hardware (if you have time). Hardware noise can have unexpected effects!
+Each QC consists of 4 steps: 1) initialization, 2) intra-finch evolution, 3) inter-finch evolution, and 4) a second step of intra-finch evolution.
 
-We will judge your entry based on both (1) how quantum it is and (2) how cool it is. 
+Initialization consists of single qubit rotations. For the first step, these are set by the user by choosing the initial finch characteristics. For subsequent steps, these rotations are set by a combination of the previous QC outcome distribution and natural selection pressure.
 
-Happy hacking!
+Intra-finch evolution correlates characteristics of a finch within individuals. For example, it might seem reasonable that the fatness of a finch is related to its wingspan or its beak size. We model these correlations as two controlled rotation gates that entangle the characteristic qubits with each other. The strength of the interaction is set buy the controlled rotation angle.
 
-## Documentation
+Inter-finch evolution models interactions between finches on different islands. The interaction is modeled as a partial swap given by an angle setting the amount of mixing between finches.
 
-This year’s iQuHACK challenges require a write-up/documentation portion that is heavily considered during
-judging. The write-up is a chance for you to be creative in describing your approach and describing
-your process. It can be in the form of a blog post, a short YouTube video or any form of
-social media. It should clearly explain the problem, the approach you used, your implementation with results
-from simulation and hardware, and how you accessed the quantum hardware (total number of shots used, 
-backends used, etc.).
+This evolution algorithm tries to model the dynamics of inter- and intra-population evolution while harnessing the full extent of the all-to-all connectivity of the IonQ platform.
 
-Make sure to clearly link the documentation into the `README.md` and to include a link to the original challenge 
-repository from the documentation!
+We have run most simulations for 2 islands (1 finch per island) with 50 shots per QC. The imperfect gate fidelities are partially an advantage in this evolution algorithm, since it adds another layer of randomness, typical in evolution. 
 
+More detailed explanation of the algorithm can be found in the pdf document [ADD DOCUMENT NAME].
 
-## Submission
+To run the algorithm run this notebook [NOTEBOOK NAME].
 
-To submit the challenge, do the following:
-1. Place all the code you wrote in one folder with your team name under the `team_solutions/` folder (for example `team_solutions/quantum_team`).
-2. Create a new entry in `team_solutions.md` following the format shown that links to the folder with your solution and your documentation.
-3. Create a Pull Request from your repository to the original challenge repository
-4. Submit the "challenge submission" form
-
-Project submission forms will automatically close on Sunday at 10am EST and won't accept late submissions.
