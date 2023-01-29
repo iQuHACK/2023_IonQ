@@ -1,5 +1,7 @@
 # Game of Finches 
 
+![logo](https://user-images.githubusercontent.com/79099250/215311239-4e778a72-0289-4562-b3a3-e8799e14ea8b.png)
+
 Game of Finches is a package that uses the IonQ quantum computer to simulate the evolution process of Darwin's finches. Users can choose initial finches and natural selection parameters and watch as their finches evolve into unique specimens using superposition, entanglement, and dephasing as motors of evolution.
 
 The finches are modeled as having 4 characteristics: color, wingspan, beak size, body size. All characteristics can have any value ranging from 0 to 1, given by the resulting probability distribution of the evolution algorithm. The evolution involves multiple finches on separate islands which can interact with each other. The evolution unfolds as follows:
