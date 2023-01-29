@@ -40,7 +40,15 @@ The graphical user interface was implemented in `pygame`. Through the game engin
 
 ![Usage of GUI](images/qag_faster_new.gif)
 
-# TODO insert images of GUI
+### How to use the GUI:
+
+- **Make a Note**": Drag and drop the H, X,Y,Z and R gates with custom paratemer values onto the circuit. Press "New Note" when you are done to add to your note sequence.
+- **Quaganini**:  Press this button to randomly generate a 3-gate circuit for a note.
+- **Quaganini?**: Press this button to randomly generate a 5-gate circuit for a note.
+- **Quaganini?**: Press this button to randomly generate a 5-gate circuit for a note.
+- **QQUAGANINI**: Press this button to randomly fill the circuit with an arbritary number of gates. 
+- **Play Music**  Select this button when you have finished creating your notes to playback your sequence. 
+- **Gneerate Music**: Press this button for Auto-Style mode to make Quaganini generate jazz music. 
 
 ### Communicating with IonQ Provider
 
