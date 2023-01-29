@@ -48,18 +48,25 @@ When we want to play the quantum sheet music, we take the quantum circuits defin
 
 ## Generating and Learning Music of a Given Genre
 
-Using the same structure as our previous circuits, we used quantum gradients with backpropagation to learn gates of a quantum circuit which generates jazz music from an ensemble of notes. 
+Using the same structure as our previous circuits, we used quantum gradients with backpropagation to learn gates of a quantum circuit which generates jazz music from an ensemble of notes.
 
-### Forward-pass:
+### Loss Function
+
+`compute_acc(midi_file)` is a function that takes in a MIDI file and outputs its similarity to the jazz style. To do so, we first compute features for each audio track in the GTZAN dataset, the most-used public dataset for evaluation in machine listening research for music genre recognition (MGR), as well as a feature for `midi_file`. We then use these features to compute the 100 nearest neighbors of `midi_file` in the dataset. The output of `compute_acc()` is then the proportion of the neighbors that are labelled as jazz, and the loss function used in the following steps is $1-\texttt{compute_acc(midi_file)}$.
+
+Note: To run the code, first download the GTZAN dataset from https://www.kaggle.com/datasets/andradaolteanu/gtzan-dataset-music-genre-classification. The dataset contains 10 genres with 100 audio files each, all having a length of 30 seconds. See the full implementation in `classifygenre.py`.
+
+### Forward-pass
+
 1. First, we initialize our state into the $|00000000\rangle$ state.
 2. Apply variable $R_x(\theta)$ gates to Qubit 0, 1, and 2, which are the rhythm qubits.
 3. Measure all 8 qubits to generate 1 note.
 4. Keep this last measurement as the next circuit's input.
 5. Repeat steps 2-4 for however many notes we want in our musical piece.
 6. Pass this list of length 8 bitstrings into `write_to_midi()` which creates the musical sound file. 
-7. Onece we have a musical sound file of all the notes, we find the similarlity to a certain style (ie. For the rest of this explanation, we will use jazz as the style of choice) through `compute_acc()`, a function which outputs the similarity of a certain musical piece to jazz.
+7. Onece we have a musical sound file of all the notes, we find the similarlity to a certain style (ie. For the rest of this explanation, we will use jazz as the style of choice) through `compute_acc()`.
 
-### Backpropagation:
+### Backpropagation
 
 8. Next, since this is a novel combination of quantum gates using backpropagation techniques, we had to calculate the graadients manually. Given this metric of how close the musical piece is to jazz, we calculate the gradients of each gate with respect to $\theta$, the rotation angle of the $R_x$ which we can vary. Based on these gradients, we nudge the gate parameters in the direction of its gradient to eventually reach a higher similarity factor using the parameter shift rule.
 9. Repeat until the similarity of a forward pass passes a certain threshold.
@@ -73,9 +80,6 @@ Using the same structure as our previous circuits, we used quantum gradients wit
 All of this is implemented in `learning.py` for more details!
 
 Given the constrained nature of a hackathon, we only had time to train 1 genre of music (jazz) 'overnight' for 4 hours, and are proud of the demo you can listen to. Additionally, we only vary and learn the rhythm qubits for two reasons -- one is so we have fewer weights to learn. Two, in terms of most learnable patterns, different genres of music are often distinguished by rhythms. For example, jazz has a lot of syncopated beats, classical music has many melodic continuous notesm, etc. Thus, we designed the quantum circuit for these 2 beneficial purposes.
-
-
-Download the GTZAN dataset from https://www.kaggle.com/datasets/andradaolteanu/gtzan-dataset-music-genre-classification.
 
 
 ## Results
