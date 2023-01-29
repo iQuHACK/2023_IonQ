@@ -70,7 +70,7 @@ Forward-pass:
 6. Pass this list of length 8 bitstrings into `write_to_midi()` which creates the musical sound file. 
 7. Onece we have a musical sound file of all the notes, we find the similarlity to a certain style (ie. For the rest of this explanation, we will use jazz as the style of choice) through `compute_acc()`, a function which outputs the similarity of a certain musical piece to jazz.
 Backpropagation:
-8. Next, since this is a novel combination of quantum gates using backpropagation techniques, we had to calculate the graadients manually. Given this metric of how close the musical piece is to jazz, we calculate the gradients of each gate with respect to $\theta$, the rotation angle of the $R_$ which we can vary. Based on these gradients, we nudge the gate parameters in the direction of its gradient to eventually reach a higher similarity factor.
+8. Next, since this is a novel combination of quantum gates using backpropagation techniques, we had to calculate the graadients manually. Given this metric of how close the musical piece is to jazz, we calculate the gradients of each gate with respect to $\theta$, the rotation angle of the $R_x$ which we can vary. Based on these gradients, we nudge the gate parameters in the direction of its gradient to eventually reach a higher similarity factor.
 9. Repeat until the similarity of a forward pass passes a certain threshold.
 
 All of this is implemented in `learning.py` for more details!
