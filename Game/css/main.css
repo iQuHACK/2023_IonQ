@@ -1,0 +1,57 @@
+body {
+  text-align: center;
+}
+
+body {
+  background-color: #282c34;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  font-size: calc(10px + 2vmin);
+  color: white;
+  line-height: 200%;
+}
+#button {
+  background: none;
+  color: #ffa260;
+  border: 2px solid;
+  padding: 0.5em 2em;
+  font-size: 1em;
+  transition: all 0.25s;
+  margin-top: 12px;
+}
+
+#button:hover {
+  border-color: #f1ff5c;
+  color: white;
+  box-shadow: 0 0.5em 0.5em -0.4em #f1ff5c;
+  transform: translateY(-0.25em); 
+  cursor: pointer;
+}
+
+.stage {
+  border-bottom: 3px solid #444;
+  display: flex;
+  height: 330px;
+  width: 100%;
+}
+.ship {
+  align-self: flex-end;
+  animation-duration: 3s;
+  animation-iteration-count: infinite;
+  /* height: 200px; */
+  margin: 0 auto 0 auto;
+  transform-origin: bottom;
+  /* width: 200px; */
+}
+.bounce-1 {
+  animation-name: bounce-1;
+  animation-timing-function: linear;
+}
+@keyframes bounce-1 {
+  0%   { transform: translateY(0); }
+  50%  { transform: translateY(-70px); }
+  100% { transform: translateY(0); }
+}
