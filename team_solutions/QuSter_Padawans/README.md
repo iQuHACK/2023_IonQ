@@ -21,4 +21,7 @@ Mando taught Grogu about these movements when they traveling across the universe
 Whenever Grogu uses his Jedi's power, an X-gate is apply to a qubit on 'greg', which then reflected on the corresponding qubit on 'knobreg'
 
 ## Computation for the game
-Javar Script was used to present the scenario to the users, offer options to play under ideal or noisy conditions, aks users to select features for the spaceship, animatedly reflect results of measurements warns Mando about 
+Javar Script was used to present the scenario to the users, offer options to play under ideal or noisy conditions, aks users to select features for the spaceship, animatedly reflect results of measurements warns Mando about the danger
+
+
+
