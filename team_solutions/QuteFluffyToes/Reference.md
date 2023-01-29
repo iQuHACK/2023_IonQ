@@ -66,7 +66,7 @@ Our prototype involves using a variational quantum circuit to generate a random 
 
 The structure of our generator utilizes the all-to-all coupling of the trapped ion system to apply a combination of CNOT and CCX gates to all the qubits, interspersed with rotations about the Y-axis. The angles of these rotations, distributed in the interval $[0,\frac{\pi}{2}]$ are the variational parameters that are updated based on the classifier's decision.
 
-![](RefFiles/encodingcirc.png)
+![](RefFiles/generator.png)
 
 (Illustration of the generator)
 
