@@ -1,0 +1,146 @@
+from qiskit import QuantumCircuit
+from qiskit_ionq import IonQProvider
+from qiskit import transpile
+from math import pi
+
+import numpy as np
+import matplotlib.pyplot as plt
+from qiskit_ionq import IonQProvider
+
+class finchEvolver:
+    def __init__(self, token='eHMFfV9o1gffeXCQLlpzKdh1nvoGUT1A', N_finches=2, characteristics_per_finch=4):
+        self.provider = IonQProvider(token=token)
+        
+        self.N_finches = N_finches
+        self.characteristics_per_finch = characteristics_per_finch
+        
+        self.qcircuit = None
+        
+    def intra_finch_evolution(self, finch_N, theta_i, theta_intra):
+
+        for ii in range(self.characteristics_per_finch):
+            qubit_N = ii+self.characteristics_per_finch*finch_N
+            self.qcircuit.rx(theta_i[qubit_N],qubit_N)
+
+        self.qcircuit.rxx(theta_intra[finch_N][0],0+self.characteristics_per_finch*finch_N, 2+self.characteristics_per_finch*finch_N)
+        self.qcircuit.rxx(theta_intra[finch_N][1],1+self.characteristics_per_finch*finch_N, 3+self.characteristics_per_finch*finch_N)
+        self.qcircuit.rxx(theta_intra[finch_N][2],0+self.characteristics_per_finch*finch_N, 3+self.characteristics_per_finch*finch_N)
+
+    def inter_finch_evolution(self, finch_Ns, characteristic, theta_inter):
+
+        for ii in range(len(characteristic)):
+            self.partial_swap(finch_Ns, characteristic[ii], theta_inter[ii])
+
+    def create_quantum_circuit(self, theta_i, theta_intra, theta_inter):
+
+        self.qcircuit = QuantumCircuit(self.N_finches*self.characteristics_per_finch,self.N_finches*self.characteristics_per_finch)
+
+        for ii in range(self.N_finches):
+            self.intra_finch_evolution(ii, theta_i, theta_intra)
+
+
+        self.inter_finch_evolution([0,1], [0,3], theta_inter)
+
+        self.qcircuit.measure(range(self.characteristics_per_finch*self.N_finches), range(self.characteristics_per_finch*self.N_finches))  
+
+
+    def partial_swap(self,finch_Ns, characteristic, theta_inter):
+
+        self.qcircuit.crx(pi, characteristic+finch_Ns[0]*self.characteristics_per_finch, 
+                          characteristic+finch_Ns[1]*self.characteristics_per_finch)
+
+        self.qcircuit.crx(theta_inter, characteristic+finch_Ns[1]*self.characteristics_per_finch, 
+                          characteristic+finch_Ns[0]*self.characteristics_per_finch)
+
+        self.qcircuit.crx(pi, characteristic+finch_Ns[0]*self.characteristics_per_finch, 
+                          characteristic+finch_Ns[1]*self.characteristics_per_finch)
+
+
+    def characteristic_results_from_outcome(self,counts,shots):
+
+        characteristic_results = np.zeros(self.N_finches*self.characteristics_per_finch)
+
+        for kk in range(len(characteristic_results)):
+            for ii in range(2**(len(characteristic_results)-1)):
+                string = np.binary_repr(ii,width=(len(characteristic_results)-1))[:kk]+str(1)+np.binary_repr(ii,width=(len(characteristic_results)-1))[kk:]
+                if string in counts:
+                    characteristic_results[kk] += counts[string]
+
+        return characteristic_results/shots
+
+    def theta_is_from_outcome(self,characteristic_results):
+        theta_i = np.arccos(np.sqrt(characteristic_results))
+        return 2*theta_i
+
+    def natural_selection_modifier(self,theta_i, preferred_characteristics, multiplier):
+        return multiplier*(pi*preferred_characteristics-theta_i) + theta_i
+
+
+    def multi_generation_evolution_plotting(self, N_gen, theta_i, theta_intra, theta_inter, preferred_characteristics, multiplier, shots):
+        
+        plt.figure(figsize=(10,15))
+        plt.subplot(N_gen+1,1,1)
+
+        plt.bar(['color finch 1','beak size finch 1','wingspan finch 1','fatness finch 1',
+                'color finch 2','beak size finch 2','wingspan finch 2','fatness finch 2'], np.sin(theta_i[::-1]/2)**2)
+
+        plt.xticks(rotation=90)
+
+        plt.ylabel('Gen 0')
+        plt.ylim([0,1])
+        
+        backend = self.provider.get_backend("ionq_simulator")
+
+        for generation in range(N_gen):
+
+            self.create_quantum_circuit(theta_i, theta_intra, theta_inter)
+
+            job = backend.run(self.qcircuit, shots=shots)
+            result = job.result()
+            counts = result.get_counts()
+
+            characteristic_results = self.characteristic_results_from_outcome(counts,shots)
+
+            theta_i = self.theta_is_from_outcome(characteristic_results)
+
+            theta_i = self.natural_selection_modifier(theta_i, preferred_characteristics, multiplier)
+
+            plt.subplot(N_gen+1,1,generation+2)
+
+            plt.bar(['color finch 1','beak size finch 1','wingspan finch 1','fatness finch 1',
+                    'color finch 2','beak size finch 2','wingspan finch 2','fatness finch 2'], characteristic_results)
+
+            plt.xticks(rotation=90)
+
+            plt.ylabel('Gen ' + str(generation+1))
+            plt.ylim([0,1])
+
+        plt.show()
+        
+    def multi_generation_evolution_just_data(self, N_gen, theta_i, theta_intra, theta_inter, preferred_characteristics, multiplier, shots):
+        
+        data = np.zeros([N_gen+1, self.N_finches*self.characteristics_per_finch])
+        plt.figure(figsize=(10,15))
+        plt.subplot(N_gen+1,1,1)
+
+        data[0,:] = np.sin(theta_i[::-1]/2)**2
+        
+        backend = self.provider.get_backend("ionq_simulator")
+
+        for generation in range(N_gen):
+
+            self.create_quantum_circuit(theta_i, theta_intra, theta_inter)
+
+            job = backend.run(self.qcircuit, shots=shots)
+            result = job.result()
+            counts = result.get_counts()
+
+            characteristic_results = self.characteristic_results_from_outcome(counts,shots)
+
+            theta_i = self.theta_is_from_outcome(characteristic_results)
+
+            theta_i = self.natural_selection_modifier(theta_i, preferred_characteristics, multiplier)
+
+            data[generation+1,:] = characteristic_results
+
+        plt.show()
