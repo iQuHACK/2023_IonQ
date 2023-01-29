@@ -16,15 +16,34 @@ class finchEvolver:
         
         self.qcircuit = None
         
-    def intra_finch_evolution(self, finch_N, theta_i, theta_intra):
-
+    def finch_init(self, finch_N, theta_i):
+        
+        # single qubit rotations
         for ii in range(self.characteristics_per_finch):
             qubit_N = ii+self.characteristics_per_finch*finch_N
             self.qcircuit.rx(theta_i[qubit_N],qubit_N)
-
-        self.qcircuit.rxx(theta_intra[finch_N][0],0+self.characteristics_per_finch*finch_N, 2+self.characteristics_per_finch*finch_N)
-        self.qcircuit.rxx(theta_intra[finch_N][1],1+self.characteristics_per_finch*finch_N, 3+self.characteristics_per_finch*finch_N)
-        self.qcircuit.rxx(theta_intra[finch_N][2],0+self.characteristics_per_finch*finch_N, 3+self.characteristics_per_finch*finch_N)
+        
+    
+    def intra_finch_evolution(self, finch_N, theta_intra):
+        
+        """ builds gates for interactions fo the characteristics withina single finch"""
+        
+        # correlation between wingspan and body size
+        self.qcircuit.crx(theta_intra[finch_N][0],
+                          0+self.characteristics_per_finch*finch_N,
+                          2+self.characteristics_per_finch*finch_N)
+        self.qcircuit.crx(theta_intra[finch_N][0],
+                          2+self.characteristics_per_finch*finch_N,
+                          0+self.characteristics_per_finch*finch_N)
+        
+        # correlation between beak size and body size
+        self.qcircuit.crx(theta_intra[finch_N][1],
+                          1+self.characteristics_per_finch*finch_N,
+                          2+self.characteristics_per_finch*finch_N)
+        self.qcircuit.crx(theta_intra[finch_N][1],
+                          2+self.characteristics_per_finch*finch_N,
+                          1+self.characteristics_per_finch*finch_N)
+        
 
     def inter_finch_evolution(self, finch_Ns, characteristic, theta_inter):
 
@@ -34,12 +53,21 @@ class finchEvolver:
     def create_quantum_circuit(self, theta_i, theta_intra, theta_inter):
 
         self.qcircuit = QuantumCircuit(self.N_finches*self.characteristics_per_finch,self.N_finches*self.characteristics_per_finch)
-
+        
+        
+        # initialization and primary evolution of characteristics of individual finches
         for ii in range(self.N_finches):
-            self.intra_finch_evolution(ii, theta_i, theta_intra)
+            self.finch_init(ii, theta_i)
+            self.intra_finch_evolution(ii, theta_intra)
+        self.qcircuit.barrier()
 
-
+        # interactions in between finches
         self.inter_finch_evolution([0,1], [0,3], theta_inter)
+        
+        # secondary evolution of characteristics of individual finches
+        for ii in range(self.N_finches):
+            self.intra_finch_evolution(ii, theta_intra)
+        self.qcircuit.barrier()
 
         self.qcircuit.measure(range(self.characteristics_per_finch*self.N_finches), range(self.characteristics_per_finch*self.N_finches))  
 
@@ -54,6 +82,7 @@ class finchEvolver:
 
         self.qcircuit.crx(pi, characteristic+finch_Ns[0]*self.characteristics_per_finch, 
                           characteristic+finch_Ns[1]*self.characteristics_per_finch)
+        self.qcircuit.barrier()
 
 
     def characteristic_results_from_outcome(self,counts,shots):
@@ -142,5 +171,13 @@ class finchEvolver:
             theta_i = self.natural_selection_modifier(theta_i, preferred_characteristics, multiplier)
 
             data[generation+1,:] = characteristic_results
-
-        plt.show()
+        
+        
+    def draw_q_circuit(self, theta_i, theta_intra, theta_inter):
+        
+        self.create_quantum_circuit(theta_i, theta_intra, theta_inter)
+        
+        backend = self.provider.get_backend("ionq_simulator")
+        
+        transpiled = transpile(self.qcircuit, backend)
+        print(transpiled)
