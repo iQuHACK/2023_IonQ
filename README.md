@@ -48,9 +48,9 @@ When we want to play the quantum sheet music, we take the quantum circuits defin
 
 ## Generating and Learning Music of a Given Genre
 
-Using the same structure as our previous circuits, we used quantum gradients with backpropagation to learn gates of a quantum circuit which generates jazz music.
+Using the same structure as our previous circuits, we used quantum gradients with backpropagation to learn gates of a quantum circuit which generates jazz music from an ensemble of notes. 
 
-Forward-pass:
+### Forward-pass:
 1. First, we initialize our state into the $|00000000\rangle$ state.
 2. Apply variable $R_x(\theta)$ gates to Qubit 0, 1, and 2, which are the rhythm qubits.
 3. Measure all 8 qubits to generate 1 note.
@@ -59,9 +59,16 @@ Forward-pass:
 6. Pass this list of length 8 bitstrings into `write_to_midi()` which creates the musical sound file. 
 7. Onece we have a musical sound file of all the notes, we find the similarlity to a certain style (ie. For the rest of this explanation, we will use jazz as the style of choice) through `compute_acc()`, a function which outputs the similarity of a certain musical piece to jazz.
 
-Backpropagation:
-8. Next, since this is a novel combination of quantum gates using backpropagation techniques, we had to calculate the graadients manually. Given this metric of how close the musical piece is to jazz, we calculate the gradients of each gate with respect to $\theta$, the rotation angle of the $R_x$ which we can vary. Based on these gradients, we nudge the gate parameters in the direction of its gradient to eventually reach a higher similarity factor.
+### Backpropagation:
+
+8. Next, since this is a novel combination of quantum gates using backpropagation techniques, we had to calculate the graadients manually. Given this metric of how close the musical piece is to jazz, we calculate the gradients of each gate with respect to $\theta$, the rotation angle of the $R_x$ which we can vary. Based on these gradients, we nudge the gate parameters in the direction of its gradient to eventually reach a higher similarity factor using the parameter shift rule.
 9. Repeat until the similarity of a forward pass passes a certain threshold.
+
+![IQHack2023_circuit](https://user-images.githubusercontent.com/57876448/215318348-23171132-5c2c-4b9a-8f6b-32762bd560d3.jpg)
+
+
+*Here is a visual of the hybrid quantum-classic circuit.*
+
 
 All of this is implemented in `learning.py` for more details!
 
