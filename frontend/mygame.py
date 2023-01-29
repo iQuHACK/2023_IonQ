@@ -51,9 +51,6 @@ class QuaganiniGUI():
 
         # generate gridsurface
         self.base_surface = pygame.Surface(self.size)
-        # for x, y in itertools.product(range(self.board_width), range(self.board_height)):
-        #     rect = pygame.Rect(x * self.cell_len, y * self.cell_len, self.cell_len, self.cell_len)
-        #     pygame.draw.rect(self.base_surface, pygame.Color('white'), rect, width = 1)
 
         self.gate_dict = self.build_gate_surfaces()
         # should setup the item selector area
@@ -210,7 +207,7 @@ class QuaganiniGUI():
 
         center_pos = (self.cell_len * (self.curr_count + 1 + 0.5), self.cell_len * (y + self.head_height) + 0.5 * self.cell_len)
         if self.mode == 'selected':
-            if len(self.selected_gate) == 2:
+            if self.selected_gate in self.double_gates:
                 # do something with circle
                 self.draw_single_gate(overlay_surface, 'O', center_pos)
             else:
@@ -224,12 +221,12 @@ class QuaganiniGUI():
             if y > self.selected_control_y:
                 pygame.draw.line(overlay_surface, pygame.Color('red'), 
                                     (sel_ctrl_center[0], sel_ctrl_center[1] + 0.3 * self.cell_len),
-                                    ((x + 0.5) * self.cell_len, (y + 0.5 + self.head_height) * self.cell_len),
+                                    ((self.curr_count + 1.5) * self.cell_len, (y + 0.5 + self.head_height) * self.cell_len),
                                     2)
             if y < self.selected_control_y:
                 pygame.draw.line(overlay_surface, pygame.Color('red'), 
                                     (sel_ctrl_center[0], sel_ctrl_center[1] - 0.3 * self.cell_len),
-                                    ((x + 0.5) * self.cell_len, (y + 0.5 + self.head_height) * self.cell_len),
+                                    ((self.curr_count + 1.5) * self.cell_len, (y + 0.5 + self.head_height) * self.cell_len),
                                     2)
             self.draw_single_gate(overlay_surface, 'B', center_pos)
         return overlay_surface
@@ -257,7 +254,7 @@ class QuaganiniGUI():
         circ_surf.fill((0, 0, 0, 0))
 
         bounding_rect = pygame.Rect(0, 0, circ_width, circ_height)
-        # pygame.draw.rect(circ_surf, pygame.Color("red"), bounding_rect, width = 1)
+        pygame.draw.rect(circ_surf, pygame.Color("red"), bounding_rect, width = 1)
 
         # draw starting lines
         for i in range(self.n_qubits):
@@ -298,12 +295,12 @@ class QuaganiniGUI():
     def draw_gate(self, circ_surf, qc: QuantumCircuit, circuit_instruction, i):
         op_name = circuit_instruction.operation.name
         qreg = qc.qregs[0]
-        if len(op_name) == 1:
+        if op_name.upper() in self.single_gates:
             target = qreg.index(circuit_instruction.qubits[0])
             loc = (((i + 1) + 0.5) * self.cell_len, (target + 0.5) * self.cell_len)
             self.draw_single_gate(circ_surf, op_name.upper(), loc)
 
-        elif len(op_name) == 2:
+        elif op_name.upper() in self.double_gates:
             # control gate
             # from
             c_index = qreg.index(circuit_instruction.qubits[0])
@@ -317,40 +314,47 @@ class QuaganiniGUI():
     def on_event(self, event):
         if event.type == pygame.QUIT:
             self._running = False
-            print(self._running)
         if event.type == pygame.MOUSEBUTTONDOWN:
-            print("clicked")
-            x, y = self.get_mouse_box(event.pos)
+            self.process_mousedown(event)
+    
+    def process_mousedown(self, event):
+        x, y = self.get_mouse_box(event.pos)
 
-            if x is None:
-                # shop area click
-                for rect, callable in self.global_bbox:
-                    if rect.collidepoint(event.pos):
-                        callable()
-                        break
-            else: 
-                # circuit area click
-                if self.mode == "selected":
-                    if len(self.selected_gate) == 1:
-                        # add the gate to the composer circuit
-                        self.composer.add_single_qubit_gate(self.selected_gate, y)
-                        # change mode to neutral
-                        self.mode = 'neutral'
-                        self.curr_count += 1
-                    else:
-                        # add the control node to the overlay layer
-                        # selected_ctrl_center = ((self.curr_count + 1.5) * self.cell_len, (self.selected_control_y + 0.5) * self.cell_len)
-                        self.selected_control_y = y
-                        self.mode = "control"
-                        
-                if self.mode == "control":
-                    if y == self.selected_control_y:
-                        return
+        if x is None:
+            # shop area click
+            for rect, callable in self.global_bbox:
+                if rect.collidepoint(event.pos):
+                    callable()
+                    break
+        else: 
+            # circuit area click
+            if self.mode == "selected":
+                self.selected_circuit_click(y)
                     
-                    self.composer.add_two_qubit_gate(self.selected_gate, self.selected_control_y, y)
-                    self.selected_control_y = None
-                    self.mode = "neutral"
-                    self.curr_count += 1
+            if self.mode == "control":
+                self.control_circuit_click(y)
+
+    def selected_circuit_click(self, y):
+        if self.selected_gate in self.single_gates:
+            # add the gate to the composer circuit
+            self.composer.add_single_qubit_gate(self.selected_gate, y)
+            # change mode to neutral
+            self.mode = 'neutral'
+            self.curr_count += 1
+        else:
+            # add the control node to the overlay layer
+            # selected_ctrl_center = ((self.curr_count + 1.5) * self.cell_len, (self.selected_control_y + 0.5) * self.cell_len)
+            self.selected_control_y = y
+            self.mode = "control"
+
+    def control_circuit_click(self, y):
+        if y == self.selected_control_y:
+            return
+        
+        self.composer.add_two_qubit_gate(self.selected_gate, self.selected_control_y, y)
+        self.selected_control_y = None
+        self.mode = "neutral"
+        self.curr_count += 1
 
 
     def on_cleanup(self):
