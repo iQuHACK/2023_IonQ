@@ -50,17 +50,16 @@ This naturally lends itself to being represented as a quantum state. For simplic
 
 Each configuration of the classical system admits a description in terms of quantities called "domain walls", in addition to the usual enlisting of $s_\mathbf{x}$ at each point $x$ on the grid. A domain wall is a line that separates a region of up spins ($s=1$) from a region of down spins ($s=-1$). When all spins are nearly aligned, we have few domain walls in the configuration. The number of these walls balloons as the temperature is increased, owing to the several pockets of neighboring up and down spins that will emerge.
 
-Since these domain walls separate regions of up from down spins, serving as "edges" between qualitatively different regions, we decided to use the Quantum Hadamard Edge Detection protocol to determine the total length of all the edges. We found that there was a sharp difference in the length of edges between the ferromagnetic and paramagnetic phases, solidifying our choice to use this as a classification.
+Since these domain walls separate regions of up from down spins, serving as "edges" between qualitatively different regions, we decided to use the Quantum Hadamard Edge Detection protocol to determine the total length of all the edges. The idea of the algorithm goes like follows: Suppose we have a square lattice of $N$ sites, the sites can be encoded in the binary bit-strings which form our computational basis. The spin information is encoded in the coeffecients of the basis that are either 0 or 1. By applying Hadamard gates on the first qubit, we obtain the coeffecient difference, i.e., the spin difference between neighboring sites. By applying measurements, we can read out the distribution of the domain walls of this spin configuration. We found that there was a sharp difference in the length of edges between the ferromagnetic and paramagnetic phases, solidifying our choice to use this as a classification.
 
 ![](https://qiskit.org/textbook/ch-applications/images/sample_image_circuit.png)
-(Illustration of quantum Hadamard edge detection algorithm. Credits: qiskit.org/learn)
 
 ### Improved Edge Counting
 Probing the probability amplitude directly from the measurement statistics can be hard, and resource comsuming, especially when the probability amplitude is small. We propose a simple protocol here for counting the number of edges detected by the QHED. 
 
 By only investigating the statistics of the measurement outcome of the last qubit. The probability of getting $|1\rangle$ is the of the order of $O(\frac{N_e}{N_s})$, $N_e$ being the number of edges and $N_s$ is number of edges, the precise expression of which depends on the way of encoding images into the quantum state. The measurement technique makes it possible to obtain a precise counting of the edges using only reasonable amount of samplingls. 
 
-
+![](RefFiles/qhed.png)
 
 
 ### Generator
