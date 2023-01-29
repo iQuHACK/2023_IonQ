@@ -71,7 +71,7 @@ Note: To run the code, first download the GTZAN dataset from https://www.kaggle.
 8. Next, since this is a novel combination of quantum gates using backpropagation techniques, we had to calculate the graadients manually. Given this metric of how close the musical piece is to jazz, we calculate the gradients of each gate with respect to $\theta$, the rotation angle of the $R_x$ which we can vary. Based on these gradients, we nudge the gate parameters in the direction of its gradient to eventually reach a higher similarity factor using the parameter shift rule.
 9. Repeat until the similarity of a forward pass passes a certain threshold.
 
-![IQHack2023_circuit](images/IQHack2023_circuit.jpg)
+![IQHack2023_circuit](images/backpropagation.png)
 
 
 *Here is a visual of the hybrid quantum-classic circuit.*

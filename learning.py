@@ -17,9 +17,9 @@ simulator = Aer.get_backend('aer_simulator')
 
 def circuit(params):
     final_meas = []
+    init_state = 0
     for i in range(num_notes):
         circui = QuantumCircuit(8, 8)
-        init_state = 0
         print('initial', init_state)
         circui.prepare_state(init_state, circui.qubits)
         # print('params first', type(params[0+3*i].numpy()))
@@ -70,12 +70,11 @@ def parameter_shift(qnode, params):
     return gradients
 
 print('param 0s', params)
-for i in range(1):
+for i in range(400):
     grads = parameter_shift(circuit, params)
     print(grads)
     params = params + np.array(grads)*np.pi/2
     print('params after ',i, ' runs: ', params)
-    
 
 with open("final_params.csv","w") as f:
     wr = csv.writer(f,delimiter="\n")
