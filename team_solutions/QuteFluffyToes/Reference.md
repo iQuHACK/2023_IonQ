@@ -33,7 +33,7 @@ For this project, our aim was to use a quantum computer to generate a configurat
 
 Naively, one might assume that $N$ qubits are needed in order to encode a grid of $N$ points. In such a scheme, we would have a qubit for each point, and its amplitude could denote the configuration at that point. However, that would not utilize the "quantum-ness" of qubits, which can store such grids with exponentially greater efficiency. To see how, consider the simple case of a $2\times2$ square grid, consisting of $N=4$ points.
 
-![](RefFiles/encodingcirc.png)
+![](RefFiles/encode.png)
 
 
 Each point on the grid is labelled with a number $i$ from 0 to $N-1$ in a sequential manner, e.g. starting from 0 at the bottom left, increasing the label by 1 as we move left, and wrapping around at the end. Upon representing these $i$s in binary, one can see that flipping the last qubit moves us one step to the left/right, and flipping the second last qubit moves us one step up/down. 
@@ -66,7 +66,8 @@ Our prototype involves using a variational quantum circuit to generate a random 
 
 The structure of our generator utilizes the all-to-all coupling of the trapped ion system to apply a combination of CNOT and CCX gates to all the qubits, interspersed with rotations about the Y-axis. The angles of these rotations, distributed in the interval $[0,\frac{\pi}{2}]$ are the variational parameters that are updated based on the classifier's decision.
 
-![](RefFiles/encode.png)
+![](RefFiles/encodingcirc.png)
+
 (Illustration of the generator)
 
 ## Future Directions
