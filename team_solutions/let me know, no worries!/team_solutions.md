@@ -32,7 +32,13 @@ Furthermore, so that the string of musical notes are correlated, we form the inp
 
 
 ## Implementation Details
-The first 3 qubits correspond to the length of the note, and the last 5 correspond to a specific pitch.
+We implemented the frontend with pygame, so the user has the experience of creating and interacting with a quantum computer from a nice GUI. More information is in the Graphical User Interface section of this documentation.
+
+To access the IonQ quantum computer, we mainly used the the `ionq_simulator` for testing.
+
+### Mapping Function
+
+We encode each note as an 8-bit string. The first 3 bits correspond to the duration of the note, and the last 5 bits correspond to the pitch of the note. The following table shows the mapping for the duration. The pitch adds 48 to the decimal value of the last 5 bits to get the MIDI pitch.
 
 ### Graphical User Interface
 
@@ -43,9 +49,9 @@ The graphical user interface was implemented in `pygame`. Through the game engin
 ### How to use the GUI:
 
 - **New Note**": Drag and drop the H, X,Y,Z, CX, CZ and R gates with custom paratemer values onto the circuit. Press "New Note" when you are done to add to your note sequence.
-- **Quaganini**:  Press this button to randomly generate a 3-gate circuit for a note.
-- **Quaganini?**: Press this button to randomly generate a 5-gate circuit for a note.
-- **QUAGANINI**: Press this button to randomly fill the circuit with an arbritary number of gates. 
+- **Qaganini**:  Press this button to randomly generate a 3-gate circuit for a note.
+- **Qaganini?**: Press this button to randomly generate a 5-gate circuit for a note.
+- **QAGANINI**: Press this button to randomly fill the circuit with an arbritary number of gates. 
 - **Play Music**: Select this button when you have finished creating your notes to playback your sequence. 
 
 ### Communicating with IonQ Provider
@@ -74,10 +80,10 @@ Note: To run the code, first download the GTZAN dataset from https://www.kaggle.
 
 ### Backpropagation
 
-8. Next, since this is a novel combination of quantum gates using backpropagation techniques, we had to calculate the graadients manually. Given this metric of how close the musical piece is to jazz, we calculate the gradients of each gate with respect to $\theta$, the rotation angle of the $R_x$ which we can vary. Based on these gradients, we nudge the gate parameters in the direction of its gradient to eventually reach a higher similarity factor using the parameter shift rule.
+8. Next, since this is a novel combination of quantum gates using backpropagation techniques, we had to calculate the gradients manually. Given this metric of how close the musical piece is to jazz, we calculate the gradients of each gate with respect to $\theta$, the rotation angle of the $R_x$ which we can vary. Based on these gradients, we nudge the gate parameters in the direction of its gradient to eventually reach a higher similarity factor using the parameter shift rule.
 9. Repeat until the similarity of a forward pass passes a certain threshold.
 
-![IQHack2023_circuit](images/.jpg)
+![IQHack2023_circuit](images/backprogigation.jpg)
 
 
 *Here is a visual of the hybrid quantum-classic circuit.*
