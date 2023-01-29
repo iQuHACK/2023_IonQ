@@ -1,3 +1,4 @@
+import csv
 import pennylane as qml
 from pennylane import numpy as np
 from matplotlib import pyplot as plt
@@ -5,27 +6,20 @@ from playsound import write_to_midi
 from qiskit import Aer, QuantumCircuit, transpile
 from random import randint, random
 from classifygenre import trainModel, compute_acc
-import warnings
-warnings.filterwarnings("ignore")
-import sys
-class DevNull:
-    def write(self, msg):
-        pass
-sys.stderr = DevNull()
 
 # set the random seed
 np.random.seed(42)
-num_notes = 10
+num_notes = 15
 # create a device to execute the circuit on
 dev = qml.device("default.qubit", wires=8)
 simulator = Aer.get_backend('aer_simulator')
 
-@qml.qnode(dev, diff_method="parameter-shift")
+
 def circuit(params):
     final_meas = []
     for i in range(num_notes):
         circui = QuantumCircuit(8, 8)
-        init_state = randint(0, pow(2, 8)-1)
+        init_state = 0
         print('initial', init_state)
         circui.prepare_state(init_state, circui.qubits)
         # print('params first', type(params[0+3*i].numpy()))
@@ -55,24 +49,16 @@ def circuit(params):
     return loss
 
 def parameter_shift_term(qnode, params, i):
-    try:
-        shifted = params.copy()
-        shifted[i] += np.pi/2
-        forward = qnode(shifted)  # forward evaluation
-    except:
-        forward = 0
-    
-    try:
-        shifted[i] -= np.pi/2
-        backward = qnode(shifted) # backward evaluation
-    except:
-        backward = 0
+    shifted = params.copy()
+    shifted[i] += np.pi/2
+    forward = circuit(shifted)  # forward evaluation
+
+    shifted[i] -= np.pi/2
+    backward = circuit(shifted) # backward evaluation
 
     return 0.5 * (forward - backward)
 
 params = np.random.random([num_notes*3], requires_grad=True)
-# gradient with respect to the first parameter
-print(parameter_shift_term(circuit, params, 0))
 
 
 def parameter_shift(qnode, params):
@@ -84,14 +70,15 @@ def parameter_shift(qnode, params):
     return gradients
 
 print('param 0s', params)
-for _ in range(1):
+for i in range(1):
     grads = parameter_shift(circuit, params)
     print(grads)
     params = params + np.array(grads)*np.pi/2
-    print('params', params, type(params))
-    params = np.array(params, requires_grad=True)
-    print(type(params))
+    print('params after ',i, ' runs: ' params)
+    
 
+with open("final_params.csv","w") as f:
+    wr = csv.writer(f,delimiter="\n")
+    for ele in params:
+        wr.writerow([ele+","])
 
-# grad_function = qml.grad(circuit)
-# print(grad_function(params)[0])

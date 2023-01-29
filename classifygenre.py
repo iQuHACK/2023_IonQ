@@ -137,7 +137,8 @@ def compute_acc(midiFile):
     feature = (mean_matrix, covariance, 0)
 
     neighbors = getNeighbors(dataset, feature, 100)
-    return sum([neighbor == 10 or neighbor == 4 for neighbor in neighbors])/100
+    # jazz - 1 , blues - 8
+    return sum([neighbor == 1 or neighbor == 8 for neighbor in neighbors])/100
 
 # Example
 # compute_acc('output.mid')
