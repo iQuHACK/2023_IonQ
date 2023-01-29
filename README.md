@@ -1,40 +1,25 @@
-# In-person challenge
+## Quantum Canvas
 
-Quantum computers have many exciting known uses for understanding our world. But, if the arc of classical computing is any guide, there are many quantum applications yet to discover for creating something wholly new.
+Quantum computing, a rapidly advancing technology, is likely to have a significant impact on the art industry. With their unique properties, quantum computers open up new possibilities for digital art, leading to advancements in animation, generative art, and interactive installations. As the technology continues to develop, we can expect to see quantum art become an increasingly important aspect of the art world. The goal of this project is to identify and visualize noise in quantum circuits in an artistic form.
+Problem: In the field of quantum computing, the design and implementation of circuits that can effectively perform quantum operations is crucial for the development of quantum algorithms and the advancement of quantum technologies. However, one of the major challenges facing the development of quantum systems is the presence of noise in the circuits. Noise can manifest in various forms, such as thermal noise, crosstalk, or electromagnetic interference, and can greatly impact the performance and accuracy of quantum operations. By using various techniques, such as simulation, measurement, and visualization, we aim to capture and represent the sources and effects of noise in quantum circuits.
+The project will involve the following steps:
+Simulation and Measurement of noise in quantum circuits to identify its effects on circuit performance.
+Visualization of the noise in an artistic form through the use of generative art.
+Approach
+We have conducted a thorough review of literature on image art generation and developed a novel concept for utilizing quantum noise in the creation of visually engaging artwork. Our approach is to quantify and utilize the unique noise present in quantum computing systems to generate new forms of digital art. We have examined various techniques for representing color in qubits and implemented various algorithms to achieve this goal.
+Implementation
+The goal of this project is to develop a comprehensive approach for identifying and visualizing noise in quantum circuits in an artistic form. In order to achieve this goal, the following implementation steps have been undertaken:
+Develop a simulation of many noisy operations (50+/qubit) to explore the noise’s effects on the performance of quantum operations.
+Apply a set of quantum gates to an initial state which encodes the binary representation of the hexadecimal color code for white (#FFFFFF) and measure the resulting state. The gates all return the qubit to its initial state, but because these operations are noisy some bits are flipped. 
+Repeat this process to generate bands of color encodings which deviate further from the initial white as errors accumulate. Use the measurement results to determine the new colors of the visualization.
+Use the measurement results to update the visualization and showcase the impact of noise on the quantum circuit.
+Repeat the process for a set of gates and measurements with different amounts of noise.
+This project is aimed at developing an approach that is based on a combination of simulation, measurement, and visualization techniques to capture and represent the sources and effects of noise in quantum circuits, and to communicate this understanding to a wider audience in an accessible and engaging manner. It will also provide a new perspective and medium to explore the complex and abstract nature of quantum mechanics, which can facilitate the public engagement and education in the field of quantum technology.
+One challenge we encountered with this implementation on IonQ’s trapped ion computers is that their single-qubit gate fidelity is 99.96% as of March 2022. Available today on Microsoft Azure for public use on Aria, their highest qubit computer, has the following fidelity. 
 
-For this challenge, you must use a quantum computer to *generate* something new.
+When looking to accumulate error—in general, the opposite of what most users of quantum computing technology intend—we found IonQ’s computers to be too good. Because error accumulates In order to have precise control over the noise, therefore, we used Qiskit’s Aer Simulator. In this way, we were able to capture noise at a scale that is visible for us to observe with color differences.
 
-Some ideas:
- - Make music with a quantum computer (https://arxiv.org/pdf/2110.12408.pdf)
- - Render graphics with a quantum ray tracer (https://arxiv.org/pdf/2204.12797.pdf)
- - Use procedural generation to make a new world (https://arxiv.org/abs/2007.11510)
- - Make a QGAN (https://arxiv.org/abs/2012.03924)
-
-Once you've debugged your code with regular simulation, please try our noisy simulators before graduating to hardware (if you have time). Hardware noise can have unexpected effects!
-
-We will judge your entry based on both (1) how quantum it is and (2) how cool it is. 
-
-Happy hacking!
-
-## Documentation
-
-This year’s iQuHACK challenges require a write-up/documentation portion that is heavily considered during
-judging. The write-up is a chance for you to be creative in describing your approach and describing
-your process. It can be in the form of a blog post, a short YouTube video or any form of
-social media. It should clearly explain the problem, the approach you used, your implementation with results
-from simulation and hardware, and how you accessed the quantum hardware (total number of shots used, 
-backends used, etc.).
-
-Make sure to clearly link the documentation into the `README.md` and to include a link to the original challenge 
-repository from the documentation!
-
-
-## Submission
-
-To submit the challenge, do the following:
-1. Place all the code you wrote in one folder with your team name under the `team_solutions/` folder (for example `team_solutions/quantum_team`).
-2. Create a new entry in `team_solutions.md` following the format shown that links to the folder with your solution and your documentation.
-3. Create a Pull Request from your repository to the original challenge repository
-4. Submit the "challenge submission" form
-
-Project submission forms will automatically close on Sunday at 10am EST and won't accept late submissions.
+Total number of shots used : 105
+100 (random walk) + 5 (color generation) experiments with one shot 
+Backends used :  Ionq, Qiskit Aer Simulation, IBM
+Challenge Repository: https://github.com/iQuHACK/2023_IonQ
