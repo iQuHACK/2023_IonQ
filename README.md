@@ -52,7 +52,7 @@ Using the same structure as our previous circuits, we used quantum gradients wit
 
 ### Loss Function
 
-`compute_acc(midi_file)` is a function that takes in a MIDI file and outputs its similarity to the jazz style. To do so, we first compute features for each audio track in the GTZAN dataset, the most-used public dataset for evaluation in machine listening research for music genre recognition (MGR), as well as a feature for `midi_file`. We then use these features to compute the 100 nearest neighbors of `midi_file` in the dataset. The output of `compute_acc()` is then the proportion of the neighbors that are labelled as jazz, and the loss function used in the following steps is $1-$`compute_acc(midi_file)}`.
+`compute_acc(midi_file)` is a function that takes in a MIDI file and outputs its similarity to the jazz style. To do so, we first compute features for each audio track in the GTZAN dataset, the most-used public dataset for evaluation in machine listening research for music genre recognition (MGR), as well as a feature for `midi_file`. We then use these features to compute the 100 nearest neighbors of `midi_file` in the dataset. The output of `compute_acc()` is then the proportion of the neighbors that are labelled as jazz, and the loss function used in the following steps is $1-$`compute_acc(midi_file)`.
 
 Note: To run the code, first download the GTZAN dataset from https://www.kaggle.com/datasets/andradaolteanu/gtzan-dataset-music-genre-classification. The dataset contains 10 genres with 100 audio files each, all having a length of 30 seconds. See the full implementation in `classifygenre.py`.
 
@@ -64,7 +64,7 @@ Note: To run the code, first download the GTZAN dataset from https://www.kaggle.
 4. Keep this last measurement as the next circuit's input.
 5. Repeat steps 2-4 for however many notes we want in our musical piece.
 6. Pass this list of length 8 bitstrings into `write_to_midi()` which creates the musical sound file. 
-7. Onece we have a musical sound file of all the notes, we find the similarlity to a certain style (ie. For the rest of this explanation, we will use jazz as the style of choice) through `compute_acc()`.
+7. Onece we have a musical sound file of all the notes, we find the similarlity to a certain style (ie., for the rest of this explanation, we will use jazz as the style of choice) through `compute_acc()`.
 
 ### Backpropagation
 
