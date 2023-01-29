@@ -30,8 +30,8 @@ def scale_region(img_path, region, scale_factor, direction=[1,0]):
         portion = image.crop(box)
         
         # Resize the portion to double the size
-        magnified = portion.resize(base_size + (int((region[1][0]-region[0][0]) * scale_factor), \
-                                                base_size + (int((region[1][1]-region[0][1]) * scale_factor))))
+        magnified = portion.resize((base_size + int((region[1][0]-region[0][0]) * scale_factor), \
+                                                base_size + int((region[1][1]-region[0][1]) * scale_factor)))
         for_shape = np.array(magnified)
         pixdata = image.load()
         for px in range(region[0][0], region[1][0]-23):
@@ -51,7 +51,7 @@ def scale_region(img_path, region, scale_factor, direction=[1,0]):
         scale_factor *= 7
         
         # Get a box of the portion you want to magnify
-        box = (region[0][0], region[0][1], region[2][0], region[1][1] + base_size * scale_factor)
+        box = (region[0][0], region[0][1], region[2][0], region[1][1]+ base_size * scale_factor)
         portion = image.crop(box)
 
         # Resize the portion to double the size
@@ -103,7 +103,7 @@ def color(img_path, x):
     scalar_map = cm.ScalarMappable(norm=norm, cmap=cmap)
     rgba = scalar_map.to_rgba(x)
 
-    img = Image.open(image_path)
+    img = Image.open(img_path)
     img = img.convert("RGB")
 
     d = img.getdata()
@@ -135,6 +135,23 @@ def visualize_1_evolution(image_path, output_name, color_r, beak_r, wingspan_r, 
     wingspan_r (float): the new wingspan factor
     fatness_r (float): the new fatness factor
     """
+    
+    # after got the quantum output
+    # start the visualization part
+
+    img_size_x, img_size_y = 612, 533 # the second dimension is the one changing vertically
+
+    # beak triangle
+    beak_tri_1_x =  447
+    beak_tri_1_y = 230
+    beak_tri_2_x = 447
+    beak_tri_2_y = 270
+    beak_tri_3_x = 480
+    beak_tri_3_y = 252
+
+    #wing rectangle:
+    left_up_x,left_up_y = 88, 84
+    right_down_x, right_down_y = 349, 358
     
     new_img = scale_region(image_path, [[beak_tri_1_x, beak_tri_1_y],[beak_tri_2_x, beak_tri_2_y],[beak_tri_3_x, beak_tri_3_y]], beak_r, [1,0])
     new_img.save("gen_image_tri.png")
