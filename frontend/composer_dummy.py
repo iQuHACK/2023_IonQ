@@ -3,7 +3,7 @@ from qiskit import QuantumCircuit, transpile
 from qiskit.visualization import plot_histogram
 from qiskit_ionq import IonQProvider
 from playsound import *
-from random import randint, random
+import random
 from numpy import pi
 from numpy.random import choice
 provider = IonQProvider(token='1oyMIFGGrziz9w5PtiTVeqPEtOKUGYoe')
@@ -77,6 +77,7 @@ class Composer:
         final_meas = []
         init_state = random.randint(48, 48+32-1)
         for cir in self.notes_circuits:
+            print(cir.draw())
 
             print('initial', init_state)
             circuit = QuantumCircuit(self.num_qubits, self.num_qubits)
@@ -85,7 +86,7 @@ class Composer:
             circuit = circuit.compose(cir)
 
             circuit.measure(range(self.num_qubits), range(self.num_qubits))
-            backend = provider.get_backend("ionq_simulator  ")#("ionq_simulator")
+            backend = provider.get_backend("ionq_simulator")#("ionq_simulator")
             transpiled = transpile(circuit, backend)
 
             job = backend.run(transpiled, shots=1)
@@ -104,10 +105,6 @@ class Composer:
         play_notes(write_to_midi(self.final_meas))
 
     
-    def compose(self):
-        results = self.run_job()
-        notes = self.map_to_notes(results)
-        return self.generate_audio(notes)
     
     
     """ Display """

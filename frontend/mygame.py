@@ -6,15 +6,6 @@ import itertools
 
 pygame.init()
 
-# size = width, height = 320, 240
-# speed = [2, 2]
-# black = 0, 0, 0
-
-# screen = pygame.display.set_mode(size)
-
-# ball = pygame.image.load("intro_ball.gif")
-# ballrect = ball.get_rect()
-
 class QuaganiniGUI():
 
     def __init__(self, composer: Composer):
@@ -31,20 +22,15 @@ class QuaganiniGUI():
         self.head_height = 3
         self.circ_height = self.n_qubits
 
-        self.board_size = self.board_width, self.board_height = 10, self.head_height + self.circ_height
+        self.board_size = self.board_width, self.board_height = 16, self.head_height + self.circ_height
         self.size: Tuple[int, int] = self.board_width * self.cell_len, self.board_height * self.cell_len 
 
         self.width, self.height = self.size
 
         self.font = pygame.font.SysFont('', 32)
 
-        self.single_gates = ['H', 'X', 'Z']
-
-        # self.tmp_circuit = QuantumCircuit(5, 5)
-        # self.tmp_circuit.h(0)
-        # self.tmp_circuit.h(1)
-        # self.tmp_circuit.cx(0, 1)
-        # # self.tmp_circuit.cx(0, 2)
+        self.single_gates = ['H', 'X', 'Y', 'Z']
+        self.double_gates = ['CX', 'CY', 'CZ']
 
         self.curr_count = 0
 
@@ -65,9 +51,9 @@ class QuaganiniGUI():
 
         # generate gridsurface
         self.base_surface = pygame.Surface(self.size)
-        for x, y in itertools.product(range(self.board_width), range(self.board_height)):
-            rect = pygame.Rect(x * self.cell_len, y * self.cell_len, self.cell_len, self.cell_len)
-            pygame.draw.rect(self.base_surface, pygame.Color('white'), rect, width = 1)
+        # for x, y in itertools.product(range(self.board_width), range(self.board_height)):
+        #     rect = pygame.Rect(x * self.cell_len, y * self.cell_len, self.cell_len, self.cell_len)
+        #     pygame.draw.rect(self.base_surface, pygame.Color('white'), rect, width = 1)
 
         self.gate_dict = self.build_gate_surfaces()
         # should setup the item selector area
@@ -83,13 +69,13 @@ class QuaganiniGUI():
         # do some display stuff
 
     def get_shop_surf(self):
-        shop_width, shop_height = 5, 2
+        shop_width, shop_height = self.board_width - 1,2
         assert shop_height < self.head_height
         shop_size = (shop_width * self.cell_len, shop_height * self.cell_len)
         shop_surf = pygame.Surface(shop_size, flags = pygame.SRCALPHA)
         shop_bbox = pygame.Rect((0, 0), shop_size)
         shop_surf.fill((0, 0, 0, 0))
-        pygame.draw.rect(shop_surf, pygame.Color("white"), shop_bbox, 2)
+        # pygame.draw.rect(shop_surf, pygame.Color("white"), shop_bbox, 2)
         
         # (rect, callable)
         bbox_collection = []
@@ -115,7 +101,7 @@ class QuaganiniGUI():
                 get_changestate_fn(g)
                 ])
         
-        for i, g in enumerate(['CX', 'CZ']):
+        for i, g in enumerate(self.double_gates):
             self.draw_two_gate(shop_surf, g[0], g[1], 
                                 ((i + 0.5 + len(self.single_gates)) * self.cell_len, shop_height/4 * self.cell_len),
                                 ((i + 0.5 + len(self.single_gates)) * self.cell_len, 3 * shop_height/4 * self.cell_len))
@@ -126,6 +112,39 @@ class QuaganiniGUI():
                              shop_height * self.cell_len),
                 get_changestate_fn(g)
             ])
+
+        # add new note button
+        new_note_dims = (2, 1)
+        new_note_box = pygame.Rect(shop_bbox.right - 0.5 * self.cell_len - new_note_dims[0] * self.cell_len, 
+                                   shop_bbox.centery - new_note_dims[1] * self.cell_len/2, 
+                                   new_note_dims[0] * self.cell_len, 
+                                   new_note_dims[1] * self.cell_len)
+        bbox_collection.append([
+            new_note_box,
+            self.new_note
+        ])
+        new_note_text = self.font.render("New Note", True, pygame.Color("white"), pygame.Color("red"))
+        pygame.draw.rect(shop_surf, pygame.Color("red"), new_note_box)
+        pygame.draw.rect(shop_surf, pygame.Color("white"), new_note_box, 3)
+        shop_surf.blit(new_note_text, new_note_text.get_rect(center=new_note_box.center))
+
+        # add play music button
+        play_dims = (2, 1)
+        play_box = new_note_box.move(-(play_dims[0] + .5) * self.cell_len, 0)
+        bbox_collection.append([
+            play_box,
+            self.play_music
+        ])
+        play_text = self.font.render("Play Music", True, pygame.Color("white"), pygame.Color("red"))
+        pygame.draw.rect(shop_surf, pygame.Color("red"), play_box)
+        pygame.draw.rect(shop_surf, pygame.Color("white"), play_box, 3)
+        shop_surf.blit(play_text, play_text.get_rect(center=play_box.center))
+
+
+        # maybe prev and next
+
+
+        # counter of which circuit you're currently viewing
         
         return shop_surf, bbox_collection
 
@@ -153,6 +172,7 @@ class QuaganiniGUI():
 
         return {"H": build_gen_surface("H", pygame.Color("white"), (0, 0, 255)),
                 "X": build_gen_surface("X", pygame.Color("white"), (0, 255, 0)),
+                "Y": build_gen_surface("Y", pygame.Color("white"), (221,160,221)),
                 "Z": build_gen_surface("Z", pygame.Color("white"), (255, 0, 0)),
                 "C": c_surf,
                 "O": o_surf,
@@ -225,8 +245,8 @@ class QuaganiniGUI():
         if self.overlay_surface is not None:
             self.screen.blit(self.overlay_surface, (0,0))
         # TODO: remove these
-        for rect, callable in self.global_bbox:
-            pygame.draw.rect(self.screen, pygame.Color("red"), rect, 2)
+        # for rect, callable in self.global_bbox:
+        #     pygame.draw.rect(self.screen, pygame.Color("red"), rect, 2)
         pygame.display.flip()
 
     def get_circuit_surf(self, qc: QuantumCircuit):
@@ -237,7 +257,7 @@ class QuaganiniGUI():
         circ_surf.fill((0, 0, 0, 0))
 
         bounding_rect = pygame.Rect(0, 0, circ_width, circ_height)
-        pygame.draw.rect(circ_surf, pygame.Color("red"), bounding_rect, width = 1)
+        # pygame.draw.rect(circ_surf, pygame.Color("red"), bounding_rect, width = 1)
 
         # draw starting lines
         for i in range(self.n_qubits):
@@ -266,6 +286,14 @@ class QuaganiniGUI():
 
         self.draw_single_gate(dest_surf, gate1, loc1)
         self.draw_single_gate(dest_surf, gate2, loc2)
+
+    def new_note(self):
+        self.curr_count = 0
+        self.composer.new_note()
+
+    def play_music(self):
+        self.composer.run_job()
+        self.composer.generate_audio()
 
     def draw_gate(self, circ_surf, qc: QuantumCircuit, circuit_instruction, i):
         op_name = circuit_instruction.operation.name
@@ -344,6 +372,6 @@ class QuaganiniGUI():
         self.on_cleanup()
 
 while True:
-    composer = Composer(5, "Poganini")
+    composer = Composer(7, "Poganini")
     qgui = QuaganiniGUI(composer)
     qgui.on_execute()
