@@ -12,7 +12,6 @@ class QuaganiniGUI():
         # setup composer, start a new note
         self.composer = composer
         self.n_qubits : int = composer.num_qubits
-        self.composer.new_note()
 
         # setup pygame metadata
         self._running : bool = True
@@ -28,8 +27,11 @@ class QuaganiniGUI():
         self.width, self.height = self.size
 
         self.font = pygame.font.SysFont('', 32)
+        self.small_font = pygame.font.SysFont('', 24)
 
-        self.single_gates = ['H', 'X', 'Y', 'Z']
+        self.single_gates_wparam = ['RX', 'RY', 'RZ']
+        self.single_gates_nparam = ['H', 'X', 'Y', 'Z']
+        self.single_gates = self.single_gates_nparam + self.single_gates_wparam
         self.double_gates = ['CX', 'CZ']
 
         self.curr_count = 0
@@ -37,8 +39,10 @@ class QuaganiniGUI():
         self.shop_shift = (0.5 * self.cell_len, 0.5 * self.cell_len)
         self.selected_gate = ''
         self.selected_control_y = None
+        self.rotation_box_y = ""
+        self.curr_rot_txt = ""
         self.mode = "neutral"
-        # modes: neutral, selected, control
+        # modes: neutral, selected, control, rotation
         # allowed: neutral -> *, selected -> neutral, selected -> control
         # not allowed: control -> selected
         self.global_bbox = []
@@ -66,7 +70,7 @@ class QuaganiniGUI():
         # do some display stuff
 
     def get_shop_surf(self):
-        shop_width, shop_height = self.board_width - 1,2
+        shop_width, shop_height = self.board_width - 1, 2
         assert shop_height < self.head_height
         shop_size = (shop_width * self.cell_len, shop_height * self.cell_len)
         shop_surf = pygame.Surface(shop_size, flags = pygame.SRCALPHA)
@@ -148,13 +152,13 @@ class QuaganiniGUI():
     def build_gate_surfaces(self):
         # gates: H, X, Z, Controls 
 
-        def build_gen_surface(inner_txt, in_color, back_color):
+        def build_gen_surface(inner_txt, in_color, back_color, text_shift = (0,0)):
             d = 0.8
             bounding_rect = pygame.Rect((0, 0), (d * self.cell_len, d * self.cell_len))
             surf = pygame.Surface((d * self.cell_len, d * self.cell_len))
             surf.fill(back_color)
             txt = self.font.render(inner_txt, True, in_color, back_color)
-            surf.blit(txt, txt.get_rect(center = (d / 2 * self.cell_len, d / 2* self.cell_len)))
+            surf.blit(txt, txt.get_rect(center = (d / 2 * self.cell_len, d / 2* self.cell_len)).move(text_shift))
             pygame.draw.rect(surf, in_color, bounding_rect, 3)
 
             return surf
@@ -167,10 +171,15 @@ class QuaganiniGUI():
         o_surf = pygame.Surface((d * self.cell_len, d * self.cell_len), pygame.SRCALPHA)
         pygame.draw.ellipse(o_surf, pygame.Color("red"), small_bbox, 2)
 
+        s_shift = (0, -0.1 * self.cell_len)
+
         return {"H": build_gen_surface("H", pygame.Color("white"), (0, 0, 255)),
                 "X": build_gen_surface("X", pygame.Color("white"), (0, 255, 0)),
                 "Y": build_gen_surface("Y", pygame.Color("white"), (221,160,221)),
                 "Z": build_gen_surface("Z", pygame.Color("white"), (255, 0, 0)),
+                "RX": build_gen_surface("RX", pygame.Color("white"), (0, 0, 0), s_shift),
+                "RY": build_gen_surface("RY", pygame.Color("white"), (0, 0, 0), s_shift),
+                "RZ": build_gen_surface("RZ", pygame.Color("white"), (0, 0, 0), s_shift),
                 "C": c_surf,
                 "O": o_surf,
                 "B": build_gen_surface("", pygame.Color("red"), (0, 0, 0))}
@@ -192,6 +201,17 @@ class QuaganiniGUI():
         overlay_surface = pygame.Surface(self.size, pygame.SRCALPHA)
         overlay_surface.fill((0,0,0,0))
         sel_ctrl_center = None
+
+        if self.mode == 'rotation':
+            # we need to open up text box
+            txt_width, txt_height = 0.7 * self.cell_len, 0.3 * self.cell_len
+            txt_rect = pygame.Rect(0, 0, txt_width, txt_height)
+            txt_rect.center = ((self.curr_count + 1.5) * self.cell_len, (self.rotation_box_y + self.head_height + .5) * self.cell_len)
+            self.draw_single_gate(overlay_surface, self.selected_gate, txt_rect.center)
+            pygame.draw.rect(overlay_surface, pygame.Color("white"), txt_rect.move(0, 0.2 * self.cell_len), 1)
+            txt = self.small_font.render(self.curr_rot_txt, True, pygame.Color('white'), pygame.Color('black'))
+            overlay_surface.blit(txt, txt.get_rect(center = txt_rect.move(0, 0.2 * self.cell_len).center))
+
 
         if self.selected_control_y is not None:
             # draw the filled in block
@@ -229,6 +249,7 @@ class QuaganiniGUI():
                                     ((self.curr_count + 1.5) * self.cell_len, (y + 0.5 + self.head_height) * self.cell_len),
                                     2)
             self.draw_single_gate(overlay_surface, 'B', center_pos)
+        
         return overlay_surface
 
     def on_loop(self):
@@ -254,7 +275,7 @@ class QuaganiniGUI():
         circ_surf.fill((0, 0, 0, 0))
 
         bounding_rect = pygame.Rect(0, 0, circ_width, circ_height)
-        pygame.draw.rect(circ_surf, pygame.Color("red"), bounding_rect, width = 1)
+        # pygame.draw.rect(circ_surf, pygame.Color("red"), bounding_rect, width = 1)
 
         # draw starting lines
         for i in range(self.n_qubits):
@@ -277,6 +298,12 @@ class QuaganiniGUI():
     def draw_single_gate(self, dest_surf, gate, loc):
         surf = self.gate_dict[gate]
         dest_surf.blit(surf, surf.get_rect(center=loc))
+    
+    def draw_single_gate_wparam(self, dest_surf, gate, loc, param):
+        surf = self.gate_dict[gate]
+        dest_surf.blit(surf, surf.get_rect(center = loc))
+        txt = self.small_font.render(str(param), True, pygame.Color('white'), pygame.Color('black'))
+        dest_surf.blit(txt, txt.get_rect(center = loc).move(0, 0.2 * self.cell_len))
 
     def draw_two_gate(self, dest_surf, gate1, gate2, loc1, loc2):
         pygame.draw.line(dest_surf, pygame.Color("white"), loc1, loc2, 3) 
@@ -295,11 +322,14 @@ class QuaganiniGUI():
     def draw_gate(self, circ_surf, qc: QuantumCircuit, circuit_instruction, i):
         op_name = circuit_instruction.operation.name
         qreg = qc.qregs[0]
-        if op_name.upper() in self.single_gates:
+        if op_name.upper() in self.single_gates_nparam:
             target = qreg.index(circuit_instruction.qubits[0])
             loc = (((i + 1) + 0.5) * self.cell_len, (target + 0.5) * self.cell_len)
             self.draw_single_gate(circ_surf, op_name.upper(), loc)
-
+        elif op_name.upper() in self.single_gates_wparam:
+            target = qreg.index(circuit_instruction.qubits[0])
+            loc = (((i + 1) + 0.5) * self.cell_len, (target + 0.5) * self.cell_len)
+            self.draw_single_gate_wparam(circ_surf, op_name.upper(), loc, circuit_instruction.operation.params[0])
         elif op_name.upper() in self.double_gates:
             # control gate
             # from
@@ -316,6 +346,8 @@ class QuaganiniGUI():
             self._running = False
         if event.type == pygame.MOUSEBUTTONDOWN:
             self.process_mousedown(event)
+        if event.type == pygame.KEYDOWN:
+            self.process_keydown(event)
     
     def process_mousedown(self, event):
         x, y = self.get_mouse_box(event.pos)
@@ -334,13 +366,33 @@ class QuaganiniGUI():
             if self.mode == "control":
                 self.control_circuit_click(y)
 
+    def process_keydown(self, event):
+        if self.mode == "rotation":
+            print(event.key)
+            if event.key == pygame.K_RETURN:
+                self.composer.add_single_qubit_gate_wparam(self.selected_gate, self.rotation_box_y, float(self.curr_rot_txt))
+                self.curr_rot_txt = ""
+                self.curr_count += 1
+                self.mode = 'neutral'
+            elif event.key == pygame.K_BACKSPACE or event.key == pygame.K_DELETE:
+                if len(self.curr_rot_txt) == 0:
+                    return
+                self.curr_rot_txt = self.curr_rot_txt[:-1]
+            else:
+                if len(self.curr_rot_txt) < 4:
+                    self.curr_rot_txt += event.unicode
+
     def selected_circuit_click(self, y):
         if self.selected_gate in self.single_gates:
-            # add the gate to the composer circuit
-            self.composer.add_single_qubit_gate(self.selected_gate, y)
-            # change mode to neutral
-            self.mode = 'neutral'
-            self.curr_count += 1
+            if self.selected_gate in self.single_gates_nparam:
+                # add the gate to the composer circuit
+                self.composer.add_single_qubit_gate(self.selected_gate, y)
+                # change mode to neutral
+                self.mode = 'neutral'
+                self.curr_count += 1
+            else:
+                self.rotation_box_y = y
+                self.mode = 'rotation'
         else:
             # add the control node to the overlay layer
             # selected_ctrl_center = ((self.curr_count + 1.5) * self.cell_len, (self.selected_control_y + 0.5) * self.cell_len)
