@@ -7,17 +7,16 @@ A paradigmatic model that is used to illuminate the physics behind such phase tr
 ## The Ising Model
 
 The Ising model is defined by a set of classical variables which can take the values $\pm 1$, each placed on the vertex of a two dimensional square lattice. These variables are intended to represent magnetic dipoles (or "spins"), and their values indicate the direction in which they point (up or down). The energy of this model is given by 
-$$
-H = -J\sum_{\langle i,j\rangle} s_i . s_j
-$$,
+
+$H = -J\sum_{\langle i,j\rangle} s_i . s_j$
 
 where $\langle i,j \rangle$ denotes pairs of nearest neighbors in the lattice. When $J>0$, the energy of the spins is the lowest when they are all aligned. This is, in fact, the defining feature of the system at low temperatures. However, as the system is heated beyond a *critical* temperature, the spins receive enough energy from the environment to point in random directions. The qualitative features of the aligned/unaligned configurations show a stark enough difference that these are said to belong to two different "phases" - a ferromagnetic phase, if the spins are aligned, and a paramagnetic phase otherwise.
 
 **The disordered phase**
-![](https://s3.hedgedoc.org/demo/uploads/1b9e0d3b-c7a3-4289-a03b-87037d530e86.png)
+![](RefFiles/disordered.png)
 
 **The ordered phase**
-![](https://s3.hedgedoc.org/demo/uploads/fc77298c-d91c-443e-846d-46d015c487bd.png)
+![](RefFiles/ordered.png)
 
 
 
@@ -34,7 +33,7 @@ For this project, our aim was to use a quantum computer to generate a configurat
 
 Naively, one might assume that $N$ qubits are needed in order to encode a grid of $N$ points. In such a scheme, we would have a qubit for each point, and its amplitude could denote the configuration at that point. However, that would not utilize the "quantum-ness" of qubits, which can store such grids with exponentially greater efficiency. To see how, consider the simple case of a $2\times2$ square grid, consisting of $N=4$ points.
 
-![](https://)![](https://s3.hedgedoc.org/demo/uploads/9df5f8af-1db1-4190-b9f7-8e242f368716.png)
+![](RefFiles/encodingcirc.png)
 
 
 Each point on the grid is labelled with a number $i$ from 0 to $N-1$ in a sequential manner, e.g. starting from 0 at the bottom left, increasing the label by 1 as we move left, and wrapping around at the end. Upon representing these $i$s in binary, one can see that flipping the last qubit moves us one step to the left/right, and flipping the second last qubit moves us one step up/down. 
