@@ -1,40 +1,55 @@
-# In-person challenge
+# Quintessence
 
-Quantum computers have many exciting known uses for understanding our world. But, if the arc of classical computing is any guide, there are many quantum applications yet to discover for creating something wholly new.
+![This is an image](./assets/logo.png)
 
-For this challenge, you must use a quantum computer to *generate* something new.
+MIT IQuHack 2023 Hackathon
 
+## IonQ challenge
+
+Landing page: <https://ionq.com/>
+
+To recap, for this challenge, you must use a quantum computer to *generate* something new.
 Some ideas:
- - Make music with a quantum computer (https://arxiv.org/pdf/2110.12408.pdf)
- - Render graphics with a quantum ray tracer (https://arxiv.org/pdf/2204.12797.pdf)
- - Use procedural generation to make a new world (https://arxiv.org/abs/2007.11510)
- - Make a QGAN (https://arxiv.org/abs/2012.03924)
 
+- Make music with a quantum computer (<https://arxiv.org/pdf/2110.12408.pdf>)
+- Render graphics with a quantum ray tracer (<https://arxiv.org/pdf/2204.12797.pdf>)
+- Use procedural generation to make a new world (<https://arxiv.org/abs/2007.11510>)
+- Make a QGAN (<https://arxiv.org/abs/2012.03924>)
 Once you've debugged your code with regular simulation, please try our noisy simulators before graduating to hardware (if you have time). Hardware noise can have unexpected effects!
+We will judge your entry based on both (1) how quantum it is and (2) how cool it is.
 
-We will judge your entry based on both (1) how quantum it is and (2) how cool it is. 
+## Quantum haze
 
-Happy hacking!
+We are using a number preserving [quantum walk search algorithm](https://qiskit.org/textbook/ch-algorithms/quantum-walk-search-algorithm.html) running on IonQ to output results of a graph traversal algorithm which represents the drunken journey of our main character and how he tries to figure out what happened to him the previous night.
+This output will be fed back into a transformers AI model and then to a stable diffusion AI model to generate a exciting dynamic storyline with associated graphics.
 
-## Documentation
+## Setup
 
-This year’s iQuHACK challenges require a write-up/documentation portion that is heavily considered during
-judging. The write-up is a chance for you to be creative in describing your approach and describing
-your process. It can be in the form of a blog post, a short YouTube video or any form of
-social media. It should clearly explain the problem, the approach you used, your implementation with results
-from simulation and hardware, and how you accessed the quantum hardware (total number of shots used, 
-backends used, etc.).
+You'll need to provide your API keys as env variables at the beginning on main.py
 
-Make sure to clearly link the documentation into the `README.md` and to include a link to the original challenge 
-repository from the documentation!
+- provider = IonQProvider("tQgNZln2nI3JSOg7hZhRXjSJHYfgrS2S")
+- openai.api_key = "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"
 
+You need to install those python packages:
 
-## Submission
+- qiskit
+- qiskit-ionq
+- flask
+- flask-cors
+- openai
 
-To submit the challenge, do the following:
-1. Place all the code you wrote in one folder with your team name under the `team_solutions/` folder (for example `team_solutions/quantum_team`).
-2. Create a new entry in `team_solutions.md` following the format shown that links to the folder with your solution and your documentation.
-3. Create a Pull Request from your repository to the original challenge repository
-4. Submit the "challenge submission" form
+## Example Result
 
-Project submission forms will automatically close on Sunday at 10am EST and won't accept late submissions.
+![rose](./assets/roseplot.png)
+
+Mr. Quanta awoke on the rooftop bar, feeling a bit disoriented. He had no idea how he had gotten there, but he had a vague recollection of a concert venue. He remembered the music, the lights, and the energy of the crowd. He had been having a great time, but he couldn't remember how he had ended up on the rooftop bar.
+
+![generated Image](./assets/pic0.png)
+
+## Team members
+
+- Victor Drouin-Touchette | vdrouin@physics.rutgers.edu
+- Chris Lamb | cdl92@physics.rutgers.edu
+- Philippe Cochin | philippe.cochin@gmail.com
+- Gavin Rockwood | gavin.rockwood@physics.rutgers.edu
+- Rob Davis | rpd89@physics.rutgers.edu
