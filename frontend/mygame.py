@@ -30,7 +30,7 @@ class QuaganiniGUI():
         self.font = pygame.font.SysFont('', 32)
 
         self.single_gates = ['H', 'X', 'Y', 'Z']
-        self.double_gates = ['CX', 'CY', 'CZ']
+        self.double_gates = ['CX', 'CZ']
 
         self.curr_count = 0
 
