@@ -163,7 +163,6 @@ class finchEvolver:
         """
         return multiplier*(pi*preferred_characteristics-theta_i) + theta_i
 
-
     def multi_generation_evolution_plotting(self, N_gen, theta_i, theta_intra, theta_inter, preferred_characteristics, multiplier, shots, noise_model=None):
         """ 
         this function simulates a full, multi-generational evolution of finch characteristics and plots the
@@ -181,8 +180,9 @@ class finchEvolver:
         noise_model (str): which noise model to use: 'aria-1' or 'harmony'. If None is set, will not use noise_model
         """
         
-        plt.figure(figsize=(10,15))
-        plt.subplot(N_gen+1,1,1)
+        fig, ax = plt.subplots(figsize=(13,6))
+        label_locs = np.arange(len(theta_i))
+        width = 0.7/(N_gen+1)
         
         labels = []
         for ii in range(self.N_finches):
@@ -190,13 +190,11 @@ class finchEvolver:
             labels.append('beak size finch ' + str(ii+1))
             labels.append('wingspan finch ' + str(ii+1))
             labels.append('fatness finch ' + str(ii+1))
-
-        plt.bar(labels, np.sin(theta_i[::-1]/2)**2)
-
-        plt.xticks(rotation=90)
-
-        plt.ylabel('Gen 0')
-        plt.ylim([0,1])
+            
+        colors = plt.cm.Blues(np.linspace(0.2,1,N_gen + 1))
+        ax.set_xticks(label_locs, labels, rotation = 45)
+        ax.bar(label_locs - N_gen * width/2, np.sin(theta_i[::-1]/2)**2, width, label = 'Gen 0', color = colors[0])
+        ax.set_ylim([0,1])
         
         backend = self.provider.get_backend("ionq_simulator")
 
@@ -204,11 +202,7 @@ class finchEvolver:
 
             self.create_quantum_circuit(theta_i, theta_intra, theta_inter)
 
-            if noise_model is not None:
-                job = backend.run(self.qcircuit, shots=shots, noise_model=noise_model)
-            else:
-                job = backend.run(self.qcircuit, shots=shots)
-                
+            job = backend.run(self.qcircuit, shots=shots)
             result = job.result()
             counts = result.get_counts()
 
@@ -218,16 +212,10 @@ class finchEvolver:
 
             theta_i = self.natural_selection_modifier(theta_i, preferred_characteristics, multiplier)
 
-            plt.subplot(N_gen+1,1,generation+2)
-
-            plt.bar(labels, characteristic_results)
-
-            plt.xticks(rotation=90)
-
-            plt.ylabel('Gen ' + str(generation+1))
-            plt.ylim([0,1])
-
-        plt.show()
+            ax.bar(label_locs - (N_gen - 2 - 2*generation)*width/2, characteristic_results, width, label = 'Gen %s'%(generation + 1), color = colors[generation + 1])
+        
+        ax.legend()
+        
         
     def multi_generation_evolution_just_data(self, N_gen, theta_i, theta_intra, theta_inter, preferred_characteristics, multiplier, shots, noise_model=None):
         """ 
