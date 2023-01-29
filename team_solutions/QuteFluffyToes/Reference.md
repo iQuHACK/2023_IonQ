@@ -50,7 +50,7 @@ Each configuration of the classical system admits a description in terms of quan
 Since these domain walls separate regions of up from down spins, serving as "edges" between qualitatively different regions, we decided to use the Quantum Hadamard Edge Detection protocol to determine the total length of all the edges. We found that there was a sharp difference in the length of edges between the ferromagnetic and paramagnetic phases, solidifying our choice to use this as a classification.
 
 ![](https://qiskit.org/textbook/ch-applications/images/sample_image_circuit.png)
-(Illustration of quantum Hadamard edge detection algorithm)
+(Illustration of quantum Hadamard edge detection algorithm. Credits: qiskit.org/learn)
 
 ### Improved Edge Counting
 Probing the probability amplitude directly from the measurement statistics can be hard, and resource comsuming, especially when the probability amplitude is small. We propose a simple protocol here for counting the number of edges detected by the QHED. 
@@ -66,7 +66,7 @@ Our prototype involves using a variational quantum circuit to generate a random 
 
 The structure of our generator utilizes the all-to-all coupling of the trapped ion system to apply a combination of CNOT and CCX gates to all the qubits, interspersed with rotations about the Y-axis. The angles of these rotations, distributed in the interval $[0,\frac{\pi}{2}]$ are the variational parameters that are updated based on the classifier's decision.
 
-![](https://s3.hedgedoc.org/demo/uploads/3695d657-56c1-409b-8763-47f599c9e19c.png)
+![](RefFiles/encode.png)
 (Illustration of the generator)
 
 ## Future Directions
