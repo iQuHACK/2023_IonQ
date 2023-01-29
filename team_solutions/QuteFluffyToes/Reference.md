@@ -13,9 +13,12 @@ $H = -J\sum_{\langle i,j\rangle} s_i . s_j$
 where $\langle i,j \rangle$ denotes pairs of nearest neighbors in the lattice. When $J>0$, the energy of the spins is the lowest when they are all aligned. This is, in fact, the defining feature of the system at low temperatures. However, as the system is heated beyond a *critical* temperature, the spins receive enough energy from the environment to point in random directions. The qualitative features of the aligned/unaligned configurations show a stark enough difference that these are said to belong to two different "phases" - a ferromagnetic phase, if the spins are aligned, and a paramagnetic phase otherwise.
 
 **The disordered phase**
+
 ![](RefFiles/disordered.png)
 
+
 **The ordered phase**
+
 ![](RefFiles/ordered.png)
 
 
