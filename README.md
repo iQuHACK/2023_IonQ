@@ -28,4 +28,4 @@ We have run most simulations for 2 islands (1 finch per island) with 50 shots pe
 
 More detailed explanation of the algorithm can be found in the pdf document iquhack_documentation.pdf.
 
-To run the algorithm run this notebook main.ipynb.
+To run the algorithm run this notebook: main.ipynb.
