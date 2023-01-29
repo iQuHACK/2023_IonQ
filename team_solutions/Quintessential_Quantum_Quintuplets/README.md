@@ -1,40 +1,18 @@
-# In-person challenge
+# Quantum Image Processing Visualization
 
-Quantum computers have many exciting known uses for understanding our world. But, if the arc of classical computing is any guide, there are many quantum applications yet to discover for creating something wholly new.
+Project for IQuHack 2023 IonQ Challenge at https://github.com/iQuHACK/2023_IonQ.
 
-For this challenge, you must use a quantum computer to *generate* something new.
+Image processing is in growing needs with the development of applications like facial recognition and autonomous vehicles. Due to the large volume and complexity of data, image processing is computationally expensive. More and more often, specialized hardwares such as GPUs are used to accelerate image processing. Quantum computing promises speed ups in a number of image processing algorithms, such as edge extraction [1]. 
 
-Some ideas:
- - Make music with a quantum computer (https://arxiv.org/pdf/2110.12408.pdf)
- - Render graphics with a quantum ray tracer (https://arxiv.org/pdf/2204.12797.pdf)
- - Use procedural generation to make a new world (https://arxiv.org/abs/2007.11510)
- - Make a QGAN (https://arxiv.org/abs/2012.03924)
-
-Once you've debugged your code with regular simulation, please try our noisy simulators before graduating to hardware (if you have time). Hardware noise can have unexpected effects!
-
-We will judge your entry based on both (1) how quantum it is and (2) how cool it is. 
-
-Happy hacking!
+We demonstrate Quantum Image Processing on the trapped ion quantum computers provided by IonQ. We first transform the image into a qubit representation named Flexible Representation of Quantum Images (FRQI). Next, we perform Quantum Fourier Transform on the input image as a demonstration of practical image processing on quantum computers. We visualize this process by repeatedly measuring the output qubits and feed the output into a fractal generation routine.
 
 ## Documentation
 
-This year’s iQuHACK challenges require a write-up/documentation portion that is heavily considered during
-judging. The write-up is a chance for you to be creative in describing your approach and describing
-your process. It can be in the form of a blog post, a short YouTube video or any form of
-social media. It should clearly explain the problem, the approach you used, your implementation with results
-from simulation and hardware, and how you accessed the quantum hardware (total number of shots used, 
-backends used, etc.).
+The link to our documentation and process can be found here: https://docs.google.com/document/d/1rIbXHpgPaqvQ9ja3OycBM_sBB9STySyqZ8Fe9A27SLs/edit
 
-Make sure to clearly link the documentation into the `README.md` and to include a link to the original challenge 
-repository from the documentation!
+To generate the fractals, you can upload an image (preferably 8 x 8 or smaller) and then follow the steps in fractal_generation.ipynb. We support larger image sizes but are constrained by simulation speed/hardware limitations.
 
+## Credit
 
-## Submission
+Credit to https://www.linkedin.com/pulse/space-fractal-art-qiskit-wiktor-mazin-phd-mmt/ for fractal generation method.
 
-To submit the challenge, do the following:
-1. Place all the code you wrote in one folder with your team name under the `team_solutions/` folder (for example `team_solutions/quantum_team`).
-2. Create a new entry in `team_solutions.md` following the format shown that links to the folder with your solution and your documentation.
-3. Create a Pull Request from your repository to the original challenge repository
-4. Submit the "challenge submission" form
-
-Project submission forms will automatically close on Sunday at 10am EST and won't accept late submissions.
