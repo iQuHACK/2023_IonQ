@@ -38,7 +38,7 @@ The first 3 qubits correspond to the length of the note, and the last 5 correspo
 
 The graphical user interface was implemented in `pygame`. Through the game engine, users are able to select from a collection of common gates (Pauli gates, Hadamard gates, CNOT, CZ, rotation gates) and place them on a quantum circuit. This circuit will be used to produce the first musical note of the tune. After they are done, the user can click the ‘New Note’  button. On the backend, this causes a new `QuantumCircuit` object to be created and placed at the end of the list. The GUI will refresh by removing all currently placed gates and displaying an empty quantum circuit. This repeats until the user decides to finish writing the sheet music. At that point, the user presses “Play music”, which will submit the jobs to the quantum hardware.
 
-![Usage of GUI](images/gui_faster.gif)
+![Usage of GUI](images/gui_faster_new.gif)
 
 # TODO insert images of GUI
 

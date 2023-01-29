@@ -170,8 +170,8 @@ class SheetMusicGUI():
             pj_box,
             self.play_jazz
         ])
-        pj_text = self.font.render("Play Jazz", True, pygame.Color("white"), pygame.Color("red"))
-        pygame.draw.rect(shop_surf, pygame.Color("red"), pj_box)
+        pj_text = self.font.render("Play Jazz", True, pygame.Color("white"), pygame.Color("blue"))
+        pygame.draw.rect(shop_surf, pygame.Color("blue"), pj_box)
         pygame.draw.rect(shop_surf, pygame.Color("white"), pj_box, 3)
         shop_surf.blit(pj_text, pj_text.get_rect(center=pj_box.center))
 
