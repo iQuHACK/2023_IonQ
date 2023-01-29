@@ -83,10 +83,10 @@ def write_to_midi(bits_arr):
         time_count += duration
 
     # write it to disk
-    with open('output1.mid', 'wb') as outf:
+    with open('output_jazz.mid', 'wb') as outf:
         mf.writeFile(outf)
     
-    return 'output1.mid'
+    return 'output_jazz.mid'
 
 def play_notes(midi_filename, vol = 1.0):
     '''Plays `midi_filename` at volume `vol` (between 0 and 1.0)'''
