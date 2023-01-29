@@ -40,14 +40,21 @@ class QuaganiniGUI():
 
         self.single_gates = ['H', 'X', 'Z']
 
-        self.tmp_circuit = QuantumCircuit(5, 5)
-        self.tmp_circuit.h(0)
-        self.tmp_circuit.h(1)
-        self.tmp_circuit.cx(0, 1)
-        # self.tmp_circuit.cx(0, 2)
+        # self.tmp_circuit = QuantumCircuit(5, 5)
+        # self.tmp_circuit.h(0)
+        # self.tmp_circuit.h(1)
+        # self.tmp_circuit.cx(0, 1)
+        # # self.tmp_circuit.cx(0, 2)
+
+        self.curr_count = 0
 
         self.shop_shift = (0.5 * self.cell_len, 0.5 * self.cell_len)
         self.selected_gate = ''
+        self.selected_control_y = None
+        self.mode = "neutral"
+        # modes: neutral, selected, control
+        # allowed: neutral -> *, selected -> neutral, selected -> control
+        # not allowed: control -> selected
         self.global_bbox = []
 
 
@@ -72,6 +79,7 @@ class QuaganiniGUI():
                 callable
             ])
             # pygame.draw.rect(self.screen, pygame.Color("red"), rect.move(self.shop_shift), 2)
+        self.overlay_surface = None
         # do some display stuff
 
     def get_shop_surf(self):
@@ -90,7 +98,9 @@ class QuaganiniGUI():
             def changestate_fn():
                 print("this works")
                 print(gate)
-                self.selected_gate = gate
+                if self.mode != 'control':
+                    self.selected_gate = gate
+                    self.mode = 'selected'
             return changestate_fn
 
         # place down gates
@@ -129,7 +139,7 @@ class QuaganiniGUI():
             surf.fill(back_color)
             txt = self.font.render(inner_txt, True, in_color, back_color)
             surf.blit(txt, txt.get_rect(center = (d / 2 * self.cell_len, d / 2* self.cell_len)))
-            pygame.draw.rect(surf, pygame.Color("white"), bounding_rect, 3)
+            pygame.draw.rect(surf, in_color, bounding_rect, 3)
 
             return surf
         
@@ -138,21 +148,83 @@ class QuaganiniGUI():
         c_surf = pygame.Surface((d * self.cell_len, d * self.cell_len), pygame.SRCALPHA)
         pygame.draw.ellipse(c_surf, pygame.Color("white"), small_bbox)
 
+        o_surf = pygame.Surface((d * self.cell_len, d * self.cell_len), pygame.SRCALPHA)
+        pygame.draw.ellipse(o_surf, pygame.Color("red"), small_bbox, 2)
 
         return {"H": build_gen_surface("H", pygame.Color("white"), (0, 0, 255)),
                 "X": build_gen_surface("X", pygame.Color("white"), (0, 255, 0)),
                 "Z": build_gen_surface("Z", pygame.Color("white"), (255, 0, 0)),
-                "C": c_surf}
+                "C": c_surf,
+                "O": o_surf,
+                "B": build_gen_surface("", pygame.Color("red"), (0, 0, 0))}
+
+    def get_mouse_box(self, mouse_pos = None):
+        # only works in the circuit area
+        if mouse_pos is None:
+            mouse_pos = pygame.Vector2(pygame.mouse.get_pos()) 
+
+        # print("called")
+        if mouse_pos[1] < self.head_height * self.cell_len or self.mode == 'neutral':
+            return (None, None)
+        rel_pos = mouse_pos[0], mouse_pos[1] - self.head_height * self.cell_len
+        x = rel_pos[0] // self.cell_len
+        y = rel_pos[1] // self.cell_len
+        return (x, y)
+
+    def get_overlay_surface(self,):
+        overlay_surface = pygame.Surface(self.size, pygame.SRCALPHA)
+        overlay_surface.fill((0,0,0,0))
+        sel_ctrl_center = None
+
+        if self.selected_control_y is not None:
+            # draw the filled in block
+            sel_ctrl_center = ((self.curr_count + 1.5) * self.cell_len, (self.selected_control_y + 0.5 + self.head_height) * self.cell_len)
+            self.draw_single_gate(overlay_surface, 'C', sel_ctrl_center)
+            # draw the line to cursor position
+
+        # do mouseover handling
+        (x, y) = self.get_mouse_box()
+
+        if x is None:
+            return overlay_surface
+
+        center_pos = (self.cell_len * (self.curr_count + 1 + 0.5), self.cell_len * (y + self.head_height) + 0.5 * self.cell_len)
+        if self.mode == 'selected':
+            if len(self.selected_gate) == 2:
+                # do something with circle
+                self.draw_single_gate(overlay_surface, 'O', center_pos)
+            else:
+                # do something with red square
+                self.draw_single_gate(overlay_surface, 'B', center_pos)
+        
+        if self.mode == 'control':
+            if y == self.selected_control_y:
+                return overlay_surface
+
+            if y > self.selected_control_y:
+                pygame.draw.line(overlay_surface, pygame.Color('red'), 
+                                    (sel_ctrl_center[0], sel_ctrl_center[1] + 0.3 * self.cell_len),
+                                    ((x + 0.5) * self.cell_len, (y + 0.5 + self.head_height) * self.cell_len),
+                                    2)
+            if y < self.selected_control_y:
+                pygame.draw.line(overlay_surface, pygame.Color('red'), 
+                                    (sel_ctrl_center[0], sel_ctrl_center[1] - 0.3 * self.cell_len),
+                                    ((x + 0.5) * self.cell_len, (y + 0.5 + self.head_height) * self.cell_len),
+                                    2)
+            self.draw_single_gate(overlay_surface, 'B', center_pos)
+        return overlay_surface
 
     def on_loop(self):
-        # do mouseover handling
-        pass
+        self.overlay_surface = self.get_overlay_surface()
 
     def on_render(self):
         self.screen.fill(pygame.Color('black'))
         self.screen.blit(self.base_surface, (0,0))
         self.screen.blit(self.shop_surface, self.shop_shift)
-        self.screen.blit(self.get_circuit_surf(self.tmp_circuit), (0, self.head_height * self.cell_len))
+        self.screen.blit(self.get_circuit_surf(self.composer.circ), (0, self.head_height * self.cell_len))
+        if self.overlay_surface is not None:
+            self.screen.blit(self.overlay_surface, (0,0))
+        # TODO: remove these
         for rect, callable in self.global_bbox:
             pygame.draw.rect(self.screen, pygame.Color("red"), rect, 2)
         pygame.display.flip()
@@ -220,10 +292,38 @@ class QuaganiniGUI():
             print(self._running)
         if event.type == pygame.MOUSEBUTTONDOWN:
             print("clicked")
-            for rect, callable in self.global_bbox:
-                if rect.collidepoint(event.pos):
-                    callable()
-            print(self.selected_gate)
+            x, y = self.get_mouse_box(event.pos)
+
+            if x is None:
+                # shop area click
+                for rect, callable in self.global_bbox:
+                    if rect.collidepoint(event.pos):
+                        callable()
+                        break
+            else: 
+                # circuit area click
+                if self.mode == "selected":
+                    if len(self.selected_gate) == 1:
+                        # add the gate to the composer circuit
+                        self.composer.add_single_qubit_gate(self.selected_gate, y)
+                        # change mode to neutral
+                        self.mode = 'neutral'
+                        self.curr_count += 1
+                    else:
+                        # add the control node to the overlay layer
+                        # selected_ctrl_center = ((self.curr_count + 1.5) * self.cell_len, (self.selected_control_y + 0.5) * self.cell_len)
+                        self.selected_control_y = y
+                        self.mode = "control"
+                        
+                if self.mode == "control":
+                    if y == self.selected_control_y:
+                        return
+                    
+                    self.composer.add_two_qubit_gate(self.selected_gate, self.selected_control_y, y)
+                    self.selected_control_y = None
+                    self.mode = "neutral"
+                    self.curr_count += 1
+
 
     def on_cleanup(self):
         print("exited")
@@ -244,6 +344,6 @@ class QuaganiniGUI():
         self.on_cleanup()
 
 while True:
-    composer = Composer(5)
+    composer = Composer(5, "Poganini")
     qgui = QuaganiniGUI(composer)
     qgui.on_execute()
