@@ -75,7 +75,7 @@ class Composer:
         # returns a formatted-results file
 
         final_meas = []
-        init_state = random.randint(48, 48+32-1)
+        init_state = randint(0, pow(2, self.num_qubits)-1)
         for cir in self.notes_circuits:
 
             print('initial', init_state)
@@ -85,7 +85,7 @@ class Composer:
             circuit = circuit.compose(cir)
 
             circuit.measure(range(self.num_qubits), range(self.num_qubits))
-            backend = provider.get_backend("ionq_simulator  ")#("ionq_simulator")
+            backend = provider.get_backend("ionq_simulator")
             transpiled = transpile(circuit, backend)
 
             job = backend.run(transpiled, shots=1)
