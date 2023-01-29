@@ -6,11 +6,11 @@ Ever wondered what “quantum music” sounds like? Come, take a listen to Qagan
 
 There are three main ways to generate music:
 
-- Auto mode: Qaganini will create a piece of quantum sheet music. You can request for Qaganini to play this piece of music multiple times. Due to the quantum nature of his music, each time he plays it, it will exhibit different variations!
+- **Auto Mode**: Qaganini will create a piece of quantum sheet music. You can request for Qaganini to play this piece of music multiple times. Due to the quantum nature of his music, each time he plays it, it will exhibit different variations!
 
-- Manual mode: You can create your own quantum sheet music by composing different quantum gates together to form rich quantum circuits. Experiment to see what sort of music you can create, and listen to its multiple variations!
+- **Manual Mode**: You can create your own quantum sheet music by composing different quantum gates together to form rich quantum circuits. Experiment to see what sort of music you can create, and listen to its multiple variations!
 
-- Auto-Style mode: Qaganini can also create music in different styles - jazz, classical, pop, and more. Select a style, and Qaganini will train a quantum circuit to generate rhythms of this style!
+- **Auto-Style Mode**: Qaganini can also create music in different styles - jazz, classical, pop, and more. Select a style, and Qaganini will train a quantum circuit to generate rhythms of this style!
 
 In the application window, you can click on the quantum gates in the top row to select them, and then select a row on the quantum circuit to place the gate down. For the two-qubit gates, you have to select the control row followed by the target row.
 
@@ -40,7 +40,15 @@ The graphical user interface was implemented in `pygame`. Through the game engin
 
 ![Usage of GUI](images/qag_faster_new.gif)
 
-# TODO insert images of GUI
+### How to use the GUI:
+
+- **Make a Note**": Drag and drop the H, X,Y,Z and R gates with custom paratemer values onto the circuit. Press "New Note" when you are done to add to your note sequence.
+- **Quaganini**:  Press this button to randomly generate a 3-gate circuit for a note.
+- **Quaganini?**: Press this button to randomly generate a 5-gate circuit for a note.
+- **Quaganini?**: Press this button to randomly generate a 5-gate circuit for a note.
+- **QQUAGANINI**: Press this button to randomly fill the circuit with an arbritary number of gates. 
+- **Play Music**  Select this button when you have finished creating your notes to playback your sequence. 
+- **Gneerate Music**: Press this button for Auto-Style mode to make Quaganini generate jazz music. 
 
 ### Communicating with IonQ Provider
 
