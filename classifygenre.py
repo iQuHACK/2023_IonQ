@@ -18,6 +18,7 @@ def distance(instance1 , instance2 , k):
     cm2 = instance2[1]
     distance = np.trace(np.dot(np.linalg.inv(cm2), cm1)) 
     distance += (np.dot(np.dot((mm2-mm1).transpose(), np.linalg.inv(cm2)), mm2-mm1)) 
+    # print('this < 0?', np.linalg.det(cm2), np.linalg.det(cm1))
     distance += np.log(np.linalg.det(cm2)) - np.log(np.linalg.det(cm1))
     distance -= k
     return distance
@@ -136,7 +137,7 @@ def compute_acc(midiFile):
     feature = (mean_matrix, covariance, 0)
 
     neighbors = getNeighbors(dataset, feature, 100)
-    return sum([neighbor == 10 for neighbor in neighbors])/100
+    return sum([neighbor == 10 or neighbor == 4 for neighbor in neighbors])/100
 
 # Example
-compute_acc('output.mid')
+# compute_acc('output.mid')
