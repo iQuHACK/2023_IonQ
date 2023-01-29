@@ -40,6 +40,10 @@ To access the IonQ quantum computer, we mainly used the the `ionq_simulator` for
 
 We encode each note as an 8-bit string. The first 3 bits correspond to the duration of the note, and the last 5 bits correspond to the pitch of the note. The following table shows the mapping for the duration. The pitch adds 48 to the decimal value of the last 5 bits to get the MIDI pitch.
 
+![mapping_function](images/duration.png)
+
+![mapping_function_notes](images/scale.png)
+
 ### Graphical User Interface
 
 The graphical user interface was implemented in `pygame`. Through the game engine, users are able to select from a collection of common gates (Pauli gates, Hadamard gates, CNOT, CZ, rotation gates) and place them on a quantum circuit. This circuit will be used to produce the first musical note of the tune. After they are done, the user can click the ‘New Note’  button. On the backend, this causes a new `QuantumCircuit` object to be created and placed at the end of the list. The GUI will refresh by removing all currently placed gates and displaying an empty quantum circuit. This repeats until the user decides to finish writing the sheet music. At that point, the user presses “Play music”, which will submit the jobs to the quantum hardware.
@@ -83,7 +87,7 @@ Note: To run the code, first download the GTZAN dataset from https://www.kaggle.
 8. Next, since this is a novel combination of quantum gates using backpropagation techniques, we had to calculate the gradients manually. Given this metric of how close the musical piece is to jazz, we calculate the gradients of each gate with respect to $\theta$, the rotation angle of the $R_x$ which we can vary. Based on these gradients, we nudge the gate parameters in the direction of its gradient to eventually reach a higher similarity factor using the parameter shift rule.
 9. Repeat until the similarity of a forward pass passes a certain threshold.
 
-![IQHack2023_circuit](images/backprogagation.jpg)
+![IQHack2023_circuit](images/backpropagation.jpg)
 
 
 *Here is a visual of the hybrid quantum-classic circuit.*
