@@ -74,7 +74,7 @@ for i in range(1):
     grads = parameter_shift(circuit, params)
     print(grads)
     params = params + np.array(grads)*np.pi/2
-    print('params after ',i, ' runs: ' params)
+    print('params after ',i, ' runs: ', params)
     
 
 with open("final_params.csv","w") as f:
