@@ -42,7 +42,7 @@ When we want to play the quantum sheet music, we take the quantum circuits defin
 
 ## Results
 
-You can listen to the `.midi` files in the folder `qaganini-samples` to learn what the music produced from the quantum sheet music sounds like!
+You can listen to the `.midi` files in the folder `qaganini-samples` to learn what the music produced from the quantum sheet music sounds like! The files there are all produced by the same piece of quantum sheet music!
 
 
 
