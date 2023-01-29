@@ -149,8 +149,6 @@ class finchEvolver:
     def multi_generation_evolution_just_data(self, N_gen, theta_i, theta_intra, theta_inter, preferred_characteristics, multiplier, shots):
         
         data = np.zeros([N_gen+1, self.N_finches*self.characteristics_per_finch])
-        plt.figure(figsize=(10,15))
-        plt.subplot(N_gen+1,1,1)
 
         data[0,:] = np.sin(theta_i[::-1]/2)**2
         
@@ -171,6 +169,60 @@ class finchEvolver:
             theta_i = self.natural_selection_modifier(theta_i, preferred_characteristics, multiplier)
 
             data[generation+1,:] = characteristic_results
+
+        return data
+        
+    def multi_generation_evolution_just_data_harmony(self, N_gen, theta_i, theta_intra, theta_inter, preferred_characteristics, multiplier, shots):
+        
+        data = np.zeros([N_gen+1, self.N_finches*self.characteristics_per_finch])
+
+        data[0,:] = np.sin(theta_i[::-1]/2)**2
+        
+        backend = self.provider.get_backend("ionq_qpu")
+
+        for generation in range(N_gen):
+
+            self.create_quantum_circuit(theta_i, theta_intra, theta_inter)
+
+            job = backend.run(self.qcircuit, shots=shots)
+            result = job.result()
+            counts = result.get_counts()
+
+            characteristic_results = self.characteristic_results_from_outcome(counts,shots)
+
+            theta_i = self.theta_is_from_outcome(characteristic_results)
+
+            theta_i = self.natural_selection_modifier(theta_i, preferred_characteristics, multiplier)
+
+            data[generation+1,:] = characteristic_results
+            
+        return data
+    
+    def multi_generation_evolution_just_data_aria(self, N_gen, theta_i, theta_intra, theta_inter, preferred_characteristics, multiplier, shots):
+        
+        data = np.zeros([N_gen+1, self.N_finches*self.characteristics_per_finch])
+
+        data[0,:] = np.sin(theta_i[::-1]/2)**2
+        
+        backend = self.provider.get_backend("ionq_qpu.aria-1")
+
+        for generation in range(N_gen):
+
+            self.create_quantum_circuit(theta_i, theta_intra, theta_inter)
+
+            job = backend.run(self.qcircuit, shots=shots)
+            result = job.result()
+            counts = result.get_counts()
+
+            characteristic_results = self.characteristic_results_from_outcome(counts,shots)
+
+            theta_i = self.theta_is_from_outcome(characteristic_results)
+
+            theta_i = self.natural_selection_modifier(theta_i, preferred_characteristics, multiplier)
+
+            data[generation+1,:] = characteristic_results
+            
+        return data
         
         
     def draw_q_circuit(self, theta_i, theta_intra, theta_inter):
