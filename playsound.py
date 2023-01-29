@@ -109,7 +109,8 @@ def play_notes(midi_filename, vol = 1.0):
         pygame.mixer.music.stop()
         raise SystemExit
 
-# Example: Bill Kill by SZA
-notes = ['Bb2', 'C3', 'Db3', 'Ab3', 'G3', 'G3', 'F3', 'Eb3', 'Bb2', 'C3']
-bits_arr = ['100' + bin(note_to_midinum[note] - 48).replace('0b','') for note in notes]
-play_notes(write_to_midi(bits_arr))
+if __name__ == "__main__":
+    # Example: Bill Kill by SZA
+    notes = ['Bb2', 'C3', 'Db3', 'Ab3', 'G3', 'G3', 'F3', 'Eb3', 'Bb2', 'C3']
+    bits_arr = ['100' + bin(note_to_midinum[note] - 48).replace('0b','') for note in notes]
+    play_notes(write_to_midi(bits_arr))

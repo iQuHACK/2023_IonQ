@@ -297,13 +297,13 @@ View all the circuits: VIEWALL
             self.do_error()
     
 
+if __name__ == "__main__":
+    #testing
+    sandbox = Sandbox_CLI()
+    sandbox.init_composer('test')
+    sandbox.construct_composer_random(12)
+    sandbox.current_composer.dump()
 
-#testing
-sandbox = Sandbox_CLI()
-sandbox.init_composer('test')
-sandbox.construct_composer_random(12)
-sandbox.current_composer.dump()
-
-for i in range(2):
-    sandbox.current_composer.run_job()
-    sandbox.current_composer.generate_audio()
+    for i in range(2):
+        sandbox.current_composer.run_job()
+        sandbox.current_composer.generate_audio()
