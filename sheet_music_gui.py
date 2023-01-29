@@ -1,13 +1,13 @@
 import sys, pygame
 from qiskit import QuantumCircuit
-from music import Composer
+from music import Composer, Sandbox_CLI
+from generate_jazz import play_generated_jazz
 from typing import Tuple
 import itertools
 
 pygame.init()
 
-class QuaganiniGUI():
-
+class SheetMusicGUI():
     def __init__(self, composer: Composer):
         # setup composer, start a new note
         self.composer = composer
@@ -21,7 +21,7 @@ class QuaganiniGUI():
         self.head_height = 3
         self.circ_height = self.n_qubits
 
-        self.board_size = self.board_width, self.board_height = 16, self.head_height + self.circ_height
+        self.board_size = self.board_width, self.board_height = 21, self.head_height + self.circ_height
         self.size: Tuple[int, int] = self.board_width * self.cell_len, self.board_height * self.cell_len 
 
         self.width, self.height = self.size
@@ -93,7 +93,10 @@ class QuaganiniGUI():
         # place down gates
         for i, g in enumerate(self.single_gates):
             center_loc = ((i + 0.5) * self.cell_len, shop_height/2 * self.cell_len)
-            self.draw_single_gate(shop_surf, g, center_loc)
+            if g in self.single_gates_wparam:
+                self.draw_single_gate(shop_surf, g + 's', center_loc)
+            else:
+                self.draw_single_gate(shop_surf, g, center_loc)
             bbox_collection.append([
                 pygame.Rect(i * self.cell_len, 
                             shop_size[1]/2 - self.cell_len / 2, 
@@ -141,6 +144,36 @@ class QuaganiniGUI():
         pygame.draw.rect(shop_surf, pygame.Color("white"), play_box, 3)
         shop_surf.blit(play_text, play_text.get_rect(center=play_box.center))
 
+        # add qaganini button
+        qag_dims = (2, 0.6)
+        qag_box = play_box.move(-(qag_dims[0] + .5) * self.cell_len, 0)
+        qag_box.height = qag_box.height * 3/5
+        qag_box.top = 0
+
+        for i, qg in enumerate(["Qaganini", "Qaganini?", "QAGANINI!"]):
+            bbox_collection.append([
+                qag_box,
+                self.qaganini_level(i)
+            ])
+            qag_text = self.font.render(qg, True, pygame.Color("white"), pygame.Color("red"))
+            pygame.draw.rect(shop_surf, pygame.Color("red"), qag_box)
+            pygame.draw.rect(shop_surf, pygame.Color("white"), qag_box, 3)
+            shop_surf.blit(qag_text, qag_text.get_rect(center=qag_box.center))
+            qag_box = qag_box.move(0, ((2 * self.cell_len) - qag_box.height) / 2)
+ 
+        # play jazz button
+        pj_dims = (2, 1)
+        pj_box = qag_box.move(-(pj_dims[0] + .5) * self.cell_len, 0)
+        pj_box.height *= 5/3
+        pj_box.centery = self.cell_len
+        bbox_collection.append([
+            pj_box,
+            self.play_jazz
+        ])
+        pj_text = self.font.render("Play Jazz", True, pygame.Color("white"), pygame.Color("red"))
+        pygame.draw.rect(shop_surf, pygame.Color("red"), pj_box)
+        pygame.draw.rect(shop_surf, pygame.Color("white"), pj_box, 3)
+        shop_surf.blit(pj_text, pj_text.get_rect(center=pj_box.center))
 
         # maybe prev and next
 
@@ -162,6 +195,14 @@ class QuaganiniGUI():
             pygame.draw.rect(surf, in_color, bounding_rect, 3)
 
             return surf
+
+        def build_param_surface(inner_txt, in_color, back_color, text_shift = (0, 0)):
+            surf = build_gen_surface(inner_txt, in_color, back_color, text_shift)
+            txt_width, txt_height = 0.6 * self.cell_len, 0.2 * self.cell_len
+            txt_rect = pygame.Rect(0, 0, txt_width, txt_height)
+            txt_rect.center = surf.get_rect().center
+            pygame.draw.rect(surf, pygame.Color("white"), txt_rect.move(0, 0.2 * self.cell_len), 1) 
+            return surf
         
         d = 0.25
         small_bbox = pygame.Rect((0, 0), (d * self.cell_len, d * self.cell_len)) 
@@ -180,6 +221,9 @@ class QuaganiniGUI():
                 "RX": build_gen_surface("RX", pygame.Color("white"), (0, 0, 0), s_shift),
                 "RY": build_gen_surface("RY", pygame.Color("white"), (0, 0, 0), s_shift),
                 "RZ": build_gen_surface("RZ", pygame.Color("white"), (0, 0, 0), s_shift),
+                "RXs": build_param_surface("RX", pygame.Color("white"), (0, 0, 0), s_shift),
+                "RYs": build_param_surface("RY", pygame.Color("white"), (0, 0, 0), s_shift),
+                "RZs": build_param_surface("RZ", pygame.Color("white"), (0, 0, 0), s_shift),
                 "C": c_surf,
                 "O": o_surf,
                 "B": build_gen_surface("", pygame.Color("red"), (0, 0, 0))}
@@ -302,7 +346,7 @@ class QuaganiniGUI():
     def draw_single_gate_wparam(self, dest_surf, gate, loc, param):
         surf = self.gate_dict[gate]
         dest_surf.blit(surf, surf.get_rect(center = loc))
-        txt = self.small_font.render(str(param), True, pygame.Color('white'), pygame.Color('black'))
+        txt = self.small_font.render(str(param)[:4], True, pygame.Color('white'), pygame.Color('black'))
         dest_surf.blit(txt, txt.get_rect(center = loc).move(0, 0.2 * self.cell_len))
 
     def draw_two_gate(self, dest_surf, gate1, gate2, loc1, loc2):
@@ -318,6 +362,29 @@ class QuaganiniGUI():
     def play_music(self):
         self.composer.run_job()
         self.composer.generate_audio()
+
+    def qaganini_level(self, i):
+        def qag_callable():
+            ranges = [1, 5, self.board_width - self.curr_count - 2]
+            print(self.curr_count)
+            for _ in range(ranges[i]):
+                self.qaganini()
+        return qag_callable
+
+    def qaganini(self):
+        # just do one random gate for them
+        command = Sandbox_CLI().random_command(self.n_qubits)
+        op = command[0].upper()
+        if op in self.single_gates_nparam:
+            self.composer.add_single_qubit_gate(op, int(command[1]))
+        elif op in self.single_gates_wparam:
+            self.composer.add_single_qubit_gate_wparam(op, int(command[1]), float(command[2]))
+        else:
+            self.composer.add_two_qubit_gate(op, int(command[1]), int(command[2]))
+        self.curr_count += 1
+
+    def play_jazz(self):
+        play_generated_jazz()
 
     def draw_gate(self, circ_surf, qc: QuantumCircuit, circuit_instruction, i):
         op_name = circuit_instruction.operation.name
@@ -429,5 +496,5 @@ class QuaganiniGUI():
 
 while True:
     composer = Composer(7, "Poganini")
-    qgui = QuaganiniGUI(composer)
+    qgui = SheetMusicGUI(composer)
     qgui.on_execute()
