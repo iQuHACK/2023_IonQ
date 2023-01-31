@@ -4,7 +4,8 @@ Team: Entanglement5
 Members: Pieter-Jan Stas, Zixiao Xu, Aniruddha Sen, Sophie Li, Sasha Geim
 # Game of Finches 
 
-![logo](https://user-images.githubusercontent.com/79099250/215311239-4e778a72-0289-4562-b3a3-e8799e14ea8b.png)
+![logo](https://user-images.githubusercontent.com/79099250/215825954-a08596ed-a134-4c7a-a23e-5c651abfdcf4.png)
+
 
 ![IonQ_corp_logo](https://user-images.githubusercontent.com/79099250/215311276-dd9675f7-77c7-424b-ad23-4d46bd819845.png)
 
@@ -30,6 +31,9 @@ This evolution algorithm tries to model the dynamics of inter- and intra-populat
 
 We have run most simulations for 2 islands (1 finch per island) with 50 shots per QC. The imperfect gate fidelities are partially an advantage in this evolution algorithm, since it adds another layer of randomness, typical in evolution. 
 
-More detailed explanation of the algorithm can be found in the pdf document iquhack_documentation.pdf.
+More detailed explanation of the algorithm can be found in the pdf document team_solutions/Entanglement5/iquhack_documentation.pdf.
 
-To run the algorithm run this notebook: main.ipynb. You will be able to set initial finch characteristics, natural selection strength, and interaction rate between the finches and watch the finches evolve.
+To run the algorithm run this notebook: team_solutions/Entanglement5/main.ipynb. You will be able to set initial finch characteristics, natural selection strength, and interaction rate between the finches and watch the finches evolve.
+
+team_solutions/Entanglement5/finch_functions.py contains the functions building and running the quantum circuits. 
+team_solutions/Entanglement5/visualization.py contains the functions creating images and visualizing the finches.
