@@ -1,6 +1,7 @@
 # Game of Finches 
 
-![logo](https://user-images.githubusercontent.com/79099250/215311239-4e778a72-0289-4562-b3a3-e8799e14ea8b.png)
+![logo](https://user-images.githubusercontent.com/79099250/215824336-916b9f26-b1b8-4024-b363-4ff44f6641b0.png)
+
 
 ![IonQ_corp_logo](https://user-images.githubusercontent.com/79099250/215311276-dd9675f7-77c7-424b-ad23-4d46bd819845.png)
 
