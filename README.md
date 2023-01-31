@@ -1,4 +1,6 @@
 # IonQ iQuHACK 2023 In-Person Challenge 
+1st Place IonQ Challenge, [MIT iQuHACK 2023](https://www.iquise.mit.edu/iQuHACK/2023-01-27)
+
 Team: Entanglement5
 
 Members: Pieter-Jan Stas, Zixiao Xu, Aniruddha Sen, Sophie Li, Sasha Geim
