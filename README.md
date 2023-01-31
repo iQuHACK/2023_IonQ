@@ -28,7 +28,7 @@ Because quantum states can lie in superposition of the computational basis, the 
 
 Furthermore, so that the string of musical notes are correlated, we form the inputs to each circuit in the following manner: The input to the first circuit (corresponding to the first note) is the all $0$’s state. The input to all subsequent circuits is then set to be the output of the previous circuit. So, for example, if the measurement of circuit 1 gives the bitstring $’0000001’$, the input to circuit 2 is set to be $|0000001\rangle$. This ensures that the quantum sheet music has musical coherence, rather than being a random sequence of notes.
 
-![Flowchart of program](images/flowchart.jpg)
+![Flowchart of program](https://github.com/mishkin101/2023_IonQ/blob/main/team_solutions/let%20me%20know%2C%20no%20worries!/images/flowchart.jpg)
 
 
 ## Implementation Details
@@ -40,15 +40,15 @@ To access the IonQ quantum computer, we mainly used the the `ionq_simulator` for
 
 We encode each note as an 8-bit string. The first 3 bits correspond to the duration of the note, and the last 5 bits correspond to the pitch of the note. The following table shows the mapping for the duration. The pitch adds 48 to the decimal value of the last 5 bits to get the MIDI pitch.
 
-![mapping_function](images/duration.png)
+![mapping_function](https://github.com/mishkin101/2023_IonQ/blob/main/team_solutions/let%20me%20know%2C%20no%20worries!/images/duration.png)
 
-![mapping_function_notes](images/scale.png)
+![mapping_function_notes](https://github.com/mishkin101/2023_IonQ/blob/main/team_solutions/let%20me%20know%2C%20no%20worries!/images/scale.png)
 
 ### Graphical User Interface
 
 The graphical user interface was implemented in `pygame`. Through the game engine, users are able to select from a collection of common gates (Pauli gates, Hadamard gates, CNOT, CZ, rotation gates) and place them on a quantum circuit. This circuit will be used to produce the first musical note of the tune. After they are done, the user can click the ‘New Note’  button. On the backend, this causes a new `QuantumCircuit` object to be created and placed at the end of the list. The GUI will refresh by removing all currently placed gates and displaying an empty quantum circuit. This repeats until the user decides to finish writing the sheet music. At that point, the user presses “Play music”, which will submit the jobs to the quantum hardware.
 
-![Usage of GUI](images/qag_faster_new.gif)
+![Usage of GUI](https://github.com/mishkin101/2023_IonQ/blob/main/team_solutions/let%20me%20know%2C%20no%20worries!/images/qag_faster_new.gif)
 
 ### How to use the GUI:
 
@@ -87,7 +87,7 @@ Note: To run the code, first download the GTZAN dataset from https://www.kaggle.
 8. Next, since this is a novel combination of quantum gates using backpropagation techniques, we had to calculate the gradients manually. Given this metric of how close the musical piece is to jazz, we calculate the gradients of each gate with respect to $\theta$, the rotation angle of the $R_x$ which we can vary. Based on these gradients, we nudge the gate parameters in the direction of its gradient to eventually reach a higher similarity factor using the parameter shift rule.
 9. Repeat until the similarity of a forward pass passes a certain threshold.
 
-![IQHack2023_circuit](images/backpropagation.png)
+![IQHack2023_circuit](https://github.com/mishkin101/2023_IonQ/blob/main/team_solutions/let%20me%20know%2C%20no%20worries!/images/backpropagation.png)
 
 
 *Here is a visual of the hybrid quantum-classic circuit.*
