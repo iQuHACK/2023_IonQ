@@ -6,7 +6,7 @@ Team: Entanglement5
 Members: Pieter-Jan Stas, Zixiao Xu, Aniruddha Sen, Sophie Li, Sasha Geim
 # Game of Finches 
 
-![logo](https://user-images.githubusercontent.com/79099250/215825954-a08596ed-a134-4c7a-a23e-5c651abfdcf4.png)
+![logo](https://user-images.githubusercontent.com/87408590/215841612-e995b442-ef59-4a7c-abf5-6ec0005ddee8.png)
 
 
 ![IonQ_corp_logo](https://user-images.githubusercontent.com/79099250/215311276-dd9675f7-77c7-424b-ad23-4d46bd819845.png)
@@ -22,6 +22,7 @@ characteristics of finches
 4. Repeat 2-3 for N generations
 
 Each QC consists of 4 steps: 1) initialization, 2) intra-finch evolution, 3) inter-finch evolution, and 4) a second step of intra-finch evolution.
+<img width="853" alt="circuit" src="https://user-images.githubusercontent.com/87408590/215841260-57071ed3-1fd1-4b58-823e-625e60aa2865.png">
 
 Initialization consists of single qubit rotations. For the first step, these are set by the user by choosing the initial finch characteristics. For subsequent steps, these rotations are set by a combination of the previous QC outcome distribution and natural selection pressure.
 
