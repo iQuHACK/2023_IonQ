@@ -32,11 +32,15 @@ Inter-finch evolution models interactions between finches on different islands. 
 
 This evolution algorithm tries to model the dynamics of inter- and intra-population evolution while harnessing the full extent of the all-to-all connectivity of the IonQ platform.
 
-We have run most simulations for 2 islands (1 finch per island) with 50 shots per QC. The imperfect gate fidelities are partially an advantage in this evolution algorithm, since it adds another layer of randomness, typical in evolution. 
+We have run most simulations for 2 islands (1 finch per island) with 50 shots per QC. The imperfect gate fidelities are partially an advantage in this evolution algorithm, since it adds another layer of randomness, typical in evolution.
 
-More detailed explanation of the algorithm can be found in the pdf document team_solutions/Entanglement5/iquhack_documentation.pdf.
+Below is an example of a 2-finch evolution run on the IonQ Harmony QPU, with the two finches starting with the same characteristics.
 
-To run the algorithm run this notebook: team_solutions/Entanglement5/main.ipynb. You will be able to set initial finch characteristics, natural selection strength, and interaction rate between the finches and watch the finches evolve.
+<img width="880" alt="Screenshot 2023-01-29 at 03 08 37" src="https://user-images.githubusercontent.com/79099250/215851614-070be3ae-718b-4da1-b854-836d0ea919d2.png">
+
+More detailed explanation of the algorithm can be found in the pdf document: team_solutions/Entanglement5/iquhack_documentation.pdf.
+
+To run the algorithm yourself, run this notebook: team_solutions/Entanglement5/main.ipynb. You will be able to set initial finch characteristics, natural selection strength, and interaction rate between the finches and watch the finches evolve.
 
 team_solutions/Entanglement5/finch_functions.py contains the functions building and running the quantum circuits. 
 team_solutions/Entanglement5/visualization.py contains the functions creating images and visualizing the finches.
