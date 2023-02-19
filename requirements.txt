@@ -34,7 +34,6 @@ iniconfig==1.1.1
 iso8601==1.1.0
 kiwisolver==1.4.4
 lark==0.11.3
-matplotlib==3.6.3
 mpmath==1.2.1
 msgpack==0.6.2
 networkx==2.8.8
