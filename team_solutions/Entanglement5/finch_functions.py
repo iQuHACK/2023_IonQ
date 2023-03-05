@@ -147,8 +147,8 @@ class finchEvolver:
         characteristic_results (array): distribution of characteristics
         """
         
-        theta_i = np.arccos(np.sqrt(characteristic_results))
-        return 2*theta_i
+        theta_i = np.arcsin(np.sqrt(characteristic_results))
+        return np.flip(2*theta_i)
 
     def natural_selection_modifier(self,theta_i, preferred_characteristics, multiplier):
         """ 
